@@ -424,6 +424,8 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
+    <ClCompile Include="source\BaseApp.cpp" />
+    <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EngineIAM.fx">
@@ -436,6 +438,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\BaseApp.h" />
+    <ClInclude Include="include\PreRequesites.h" />
+    <ClInclude Include="include\Window.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="EngineIAM.rc" />
   </ItemGroup>
