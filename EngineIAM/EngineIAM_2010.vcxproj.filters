@@ -29,6 +29,9 @@
     <ClInclude Include="include\Window.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Device.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
@@ -36,6 +39,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\Window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Device.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
