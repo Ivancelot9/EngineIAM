@@ -32,6 +32,12 @@
     <ClInclude Include="include\Device.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\DeviceContext.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SwapChain.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
@@ -42,6 +48,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\Device.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DeviceContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
