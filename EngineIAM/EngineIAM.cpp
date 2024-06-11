@@ -12,31 +12,8 @@
 #include "SwapChain.h"
 #include "Texture.h"
 #include "DepthStencilView.h"
-//--------------------------------------------------------------------------------------
-// Structures
-//--------------------------------------------------------------------------------------
-struct SimpleVertex
-{
-    XMFLOAT3 Pos;
-    XMFLOAT2 Tex;
-};
-
-struct CBNeverChanges
-{
-    XMMATRIX mView;
-};
-
-struct CBChangeOnResize
-{
-    XMMATRIX mProjection;
-};
-
-struct CBChangesEveryFrame
-{
-    XMMATRIX mWorld;
-    XMFLOAT4 vMeshColor;
-};
-
+#include "RenderTargetView.h"
+#include "Viewport.h"
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -51,13 +28,14 @@ SwapChain                           g_swapchain;
 Texture                             g_backBuffer;
 Texture                             g_depthStencil;
 DepthStencilView                    g_depthStencilView;
-
+RenderTargetView                    g_renderTargetView;
+Viewport                            g_viewport;
 //D3D_DRIVER_TYPE                     g_driverType = D3D_DRIVER_TYPE_NULL;
 //D3D_FEATURE_LEVEL                   g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 //ID3D11Device*                       g_device.m_device = NULL;
 //ID3D11DeviceContext*                g_deviceContext.m_deviceContext = NULL;
 //IDXGISwapChain*                     g_pSwapChain = NULL;
-ID3D11RenderTargetView*             g_pRenderTargetView = NULL;
+//ID3D11RenderTargetView*             g_pRenderTargetView = NULL;
 //ID3D11Texture2D*                    g_pDepthStencil = NULL;
 //ID3D11DepthStencilView*             g_pDepthStencilView = NULL;
 ID3D11VertexShader*                 g_pVertexShader = NULL;
@@ -246,19 +224,11 @@ HRESULT InitDevice()
             break;
     }
     if( FAILED( hr ) )*/
-        //return hr;
+        //Create SwapChain
     g_swapchain.init(g_device, g_deviceContext, g_backBuffer, g_window);
     // Create a render target view
-    //ID3D11Texture2D* pBackBuffer = NULL;
-    //hr = g_pSwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&pBackBuffer );
-    //if( FAILED( hr ) )
-       // return hr;
-    g_device.CreateRenderTargetView(g_backBuffer.m_texture, nullptr, &g_pRenderTargetView);
-
-   // hr = g_device.m_device->CreateRenderTargetView( pBackBuffer, NULL, &g_pRenderTargetView );
-    g_backBuffer.m_texture->Release();
-    //if( FAILED( hr ) )
-        //return hr;
+   
+    g_renderTargetView.init(g_device, g_backBuffer, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     // Create depth stencil texture
     g_depthStencil.init(g_device, g_window.m_width,
@@ -295,17 +265,19 @@ HRESULT InitDevice()
     //if( FAILED( hr ) )
         //return hr;
     g_depthStencilView.init(g_device, g_depthStencil, DXGI_FORMAT_D24_UNORM_S8_UINT);
-    g_deviceContext.m_deviceContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_depthStencilView.m_depthStencilView); //preguntar por ejemplo de aqui
+   // g_deviceContext.m_deviceContext->OMSetRenderTargets( 1, &g_renderTargetView, g_depthStencilView.m_depthStencilView); //preguntar por ejemplo de aqui
 
     // Setup the viewport
-    D3D11_VIEWPORT vp;
+
+    g_viewport.init(g_window);
+   /* D3D11_VIEWPORT vp;
     vp.Width = (FLOAT)g_window.m_width;
     vp.Height = (FLOAT)g_window.m_height;
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
     vp.TopLeftX = 0;
     vp.TopLeftY = 0;
-    g_deviceContext.m_deviceContext->RSSetViewports( 1, &vp );
+    g_deviceContext.m_deviceContext->RSSetViewports( 1, &vp );*/
 
     // Compile the vertex shader
     ID3DBlob* pVSBlob = NULL;
@@ -548,7 +520,8 @@ void CleanupDevice()
     g_depthStencilView.destroy();
     g_depthStencil.destroy();
     //if( g_pDepthStencilView ) g_pDepthStencilView->Release();
-    if( g_pRenderTargetView ) g_pRenderTargetView->Release();
+    //if( g_pRenderTargetView ) g_pRenderTargetView->Release();
+    g_renderTargetView.destroy();
     //if( g_pSwapChain ) g_pSwapChain->Release();
     //if( g_deviceContext.m_deviceContext ) g_deviceContext.m_deviceContext->Release();
     g_swapchain.destroy();
@@ -617,9 +590,9 @@ void Render()
     // Clear the back buffer
     //
     float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red, green, blue, alpha
-    g_deviceContext.m_deviceContext->ClearRenderTargetView( g_pRenderTargetView, ClearColor );
+    g_renderTargetView.render(g_deviceContext, g_depthStencilView, 1, ClearColor);
 
-    //
+    g_viewport.render(g_deviceContext);
     // Clear the depth buffer to 1.0 (max depth)
     //
     //g_deviceContext.m_deviceContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );

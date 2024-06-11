@@ -37,3 +37,27 @@
    os_ << "ERROR : " << classObj << "::" << method << " : " << "  Error in data from params [" << errorMSG << "] \n"; \
    OutputDebugStringW( os_.str().c_str() );  \
 }
+
+
+//Structuras
+struct SimpleVertex
+{
+    XMFLOAT3 Pos;
+    XMFLOAT2 Tex;
+};
+
+struct CBNeverChanges
+{
+    XMMATRIX mView;
+};
+
+struct CBChangeOnResize
+{
+    XMMATRIX mProjection;
+};
+
+struct CBChangesEveryFrame
+{
+    XMMATRIX mWorld;
+    XMFLOAT4 vMeshColor;
+};
