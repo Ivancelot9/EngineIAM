@@ -50,6 +50,12 @@
     <ClInclude Include="include\Viewport.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\InputLayouth.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderProgram.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
@@ -78,6 +84,10 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\Viewport.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="include\InputLayouth.cpp" />
+    <ClCompile Include="source\ShaderProgram.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,3 +35,16 @@ void DeviceContext::RSSetViewports(unsigned int NumViewports, const D3D11_VIEWPO
 		m_deviceContext->RSSetViewports(NumViewports, pViewports);
 	}
 }
+
+void DeviceContext::IASetInputLayout(ID3D11InputLayout* pInputLayout)
+{
+	if (pInputLayout == nullptr)
+	{
+		ERROR("DeviceContext", "IASetInputLayout", "CHECK FOR ID3D11InputLayout* pInputLayout");
+		exit(1);
+	}
+	else
+	{
+		m_deviceContext->IASetInputLayout(pInputLayout);
+	}
+}

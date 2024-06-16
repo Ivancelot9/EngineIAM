@@ -424,11 +424,13 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
+    <ClCompile Include="include\InputLayouth.cpp" />
     <ClCompile Include="source\BaseApp.cpp" />
     <ClCompile Include="source\DepthStencilView.cpp" />
     <ClCompile Include="source\Device.cpp" />
     <ClCompile Include="source\DeviceContext.cpp" />
     <ClCompile Include="source\RenderTargetView.cpp" />
+    <ClCompile Include="source\ShaderProgram.cpp" />
     <ClCompile Include="source\SwapChain.cpp" />
     <ClCompile Include="source\Texture.cpp" />
     <ClCompile Include="source\Viewport.cpp" />
@@ -449,8 +451,10 @@
     <ClInclude Include="include\DepthStencilView.h" />
     <ClInclude Include="include\Device.h" />
     <ClInclude Include="include\DeviceContext.h" />
+    <ClInclude Include="include\InputLayouth.h" />
     <ClInclude Include="include\PreRequesites.h" />
     <ClInclude Include="include\RenderTargetView.h" />
+    <ClInclude Include="include\ShaderProgram.h" />
     <ClInclude Include="include\SwapChain.h" />
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\Viewport.h" />
