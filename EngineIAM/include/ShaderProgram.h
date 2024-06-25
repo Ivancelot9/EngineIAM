@@ -24,11 +24,10 @@ public:
 	HRESULT CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint,
 		LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
-	void CreateVertexShader(Device device);
+	void CreateInputLayout(Device device, 
+		std::vector<D3D11_INPUT_ELEMENT_DESC>Layout);
 
-	void CreateInputLayout(Device device, std::vector<D3D11_INPUT_ELEMENT_DESC>Layout);
-
-	void CreatePixelShader(Device device);
+	void CreateShader(Device device, ShaderType type);
 
 public:
 
