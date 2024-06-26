@@ -6,6 +6,7 @@
 #include <d3d11.h>
 #include <vector>
 
+
 //Librerias DirectX
 #include <d3dx11.h>
 #include <d3dcompiler.h>
@@ -66,4 +67,13 @@ enum ShaderType
 {
     PIXEL_SHADER = 0,
     VERTEX_SHADER = 1
+};
+
+struct Mesh
+{
+    std::string name;
+    std::vector <SimpleVertex> vertex;
+    std::vector <unsigned int> index;
+    int numVertex;
+    int numIndex;
 };
