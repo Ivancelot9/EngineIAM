@@ -93,6 +93,20 @@ void DeviceContext::IASetIndexBuffer(ID3D11Buffer* pIndexBuffer, DXGI_FORMAT For
 	m_deviceContext->IASetIndexBuffer(pIndexBuffer, Format, Offset);
 }
 
+void DeviceContext::PSSetSamplers(unsigned int StartSlot, unsigned int NumSamplers, ID3D11SamplerState* const* ppSamplers)
+{
+	if (ppSamplers == nullptr)
+	{
+		ERROR("DeviceContext", "PSSetSamplers", "Check for ID3D11SamplerState* const* ppSamplers");
+	}
+	else
+	{
+		m_deviceContext->PSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+
+	}
+
+}
+
 
 
 

@@ -431,6 +431,7 @@
     <ClCompile Include="source\Device.cpp" />
     <ClCompile Include="source\DeviceContext.cpp" />
     <ClCompile Include="source\RenderTargetView.cpp" />
+    <ClCompile Include="source\SamplerState.cpp" />
     <ClCompile Include="source\ShaderProgram.cpp" />
     <ClCompile Include="source\SwapChain.cpp" />
     <ClCompile Include="source\Texture.cpp" />
@@ -456,6 +457,7 @@
     <ClInclude Include="include\InputLayouth.h" />
     <ClInclude Include="include\PreRequesites.h" />
     <ClInclude Include="include\RenderTargetView.h" />
+    <ClInclude Include="include\SamplerState.h" />
     <ClInclude Include="include\ShaderProgram.h" />
     <ClInclude Include="include\SwapChain.h" />
     <ClInclude Include="include\Texture.h" />

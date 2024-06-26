@@ -59,6 +59,9 @@
     <ClInclude Include="include\Buffer.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\SamplerState.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
@@ -94,6 +97,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\Buffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SamplerState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

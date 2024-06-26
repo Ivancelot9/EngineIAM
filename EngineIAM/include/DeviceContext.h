@@ -42,6 +42,9 @@ public:
 	void IASetIndexBuffer(ID3D11Buffer* pIndexBuffer,
 		DXGI_FORMAT Format,
 		unsigned int Offset);
+
+	void PSSetSamplers(unsigned int StartSlot, unsigned int NumSamplers,
+		               ID3D11SamplerState* const* ppSamplers);
 public:
 	ID3D11DeviceContext* m_deviceContext = nullptr;
 
