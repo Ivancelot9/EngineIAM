@@ -48,11 +48,22 @@ bool ModelLoader::LoadModel(const std::string& filePath)
 	lImporter->Destroy();
 	MESSAGE("ModelLoader", "loadModel", "Successfully imported the FBX scene from file: " << filePath.c_str());
    //Process the scene
-	FbxNode* rootNode = lScene->GetRootNode();
-	if (rootNode)
+	FbxNode* lrootNode = lScene->GetRootNode();
+	if (lrootNode)
 	{
-		ProcessNode(rootNode);
+		for (int i = 0; i < lrootNode->GetChildCount(); i++)
+		{
+			ProcessNode(lrootNode);
+		}
 	}
+
+	int materialCount = lScene->GetMaterialCount();
+	for (int i = 0; i < materialCount; ++i)
+	{
+		FbxSurfaceMaterial* material = lScene->GetMaterial(i);
+		ProcessMaterials(material);
+	}
+
 	 return true;
 }
 
@@ -62,7 +73,7 @@ void ModelLoader::ProcessNode(FbxNode* node)
 	{
 		if (node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
-			ProcessMesh(node->GetMesh());
+			ProcessMesh(node);
 		}
 	}
 	for (int i = 0; i < node->GetChildCount(); i++)
@@ -71,46 +82,94 @@ void ModelLoader::ProcessNode(FbxNode* node)
 	}
 }
 
-void ModelLoader::ProcessMesh(FbxMesh* mesh)
+void ModelLoader::ProcessMesh(FbxNode* node)
 {
-	int polygonCount = mesh->GetPolygonCount();
-	vertices.reserve(polygonCount * 3);
-	indices.reserve(polygonCount * 3);
+	FbxMesh* mesh = node->GetMesh();
+	if (!mesh)return;
 
-	//Get the UV set name
-	const char* uvSetName = nullptr;
-	FbxStringList uvSetNameList;
-	mesh->GetUVSetNames(uvSetNameList);
-	if (uvSetNameList.GetCount() < 0)
-	{
-		uvSetName = uvSetNameList.GetStringAt(0);//Use the first uv set
+	std::vector<SimpleVertex> vertices;
+	std::vector<UINT> indices;
+
+	// Procesar vértices y normales
+	for (int i = 0; i < mesh->GetControlPointsCount(); i++) {
+		FbxVector4* controlPoint = mesh->GetControlPoints();
+		SimpleVertex vertex;
+		vertex.Pos = XMFLOAT3((float)controlPoint[i][0],
+			(float)controlPoint[i][1],
+			(float)controlPoint[i][2]);
+		vertices.push_back(vertex);
 	}
-	else {
-		ERROR("ModelLoader", "ProcessMesh", "No UV set found in the mesh")
-			return;
-	}
+	// Procesar UVs
+	if (mesh->GetElementUVCount() > 0) {
+		FbxGeometryElementUV* uvElement = mesh->GetElementUV(0);
+		FbxGeometryElement::EMappingMode mappingMode = uvElement->GetMappingMode();
+		FbxGeometryElement::EReferenceMode referenceMode = uvElement->GetReferenceMode();
+		int polyIndexCounter = 0;
 
-	// Get the vertices and indices
-	for (int i = 0; i < polygonCount; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			SimpleVertex vertex;
-			//Get vertex position
+		for (int polyIndex = 0; polyIndex < mesh->GetPolygonCount(); polyIndex++) {
+			int polySize = mesh->GetPolygonSize(polyIndex);
+			for (int vertIndex = 0; vertIndex < polySize; vertIndex++) {
+				int controlPointIndex = mesh->GetPolygonVertex(polyIndex, vertIndex);
 
-			int controlPointIndex = mesh->GetPolygonVertex(i, j);
-			FbxVector4 pos = mesh->GetControlPointAt(controlPointIndex);
-			vertex.Pos = XMFLOAT3(static_cast<float>(pos[0]), static_cast<float>(pos[1]),
-				static_cast<float>(pos[2]));
+				int uvIndex = -1;
+				if (mappingMode == FbxGeometryElement::eByControlPoint) {
+					if (referenceMode == FbxGeometryElement::eDirect) {
+						uvIndex = controlPointIndex;
+					}
+					else if (referenceMode == FbxGeometryElement::eIndexToDirect) {
+						uvIndex = uvElement->GetIndexArray().GetAt(controlPointIndex);
+					}
+				}
+				else if (mappingMode == FbxGeometryElement::eByPolygonVertex) {
+					if (referenceMode == FbxGeometryElement::eDirect || referenceMode == FbxGeometryElement::eIndexToDirect) {
+						uvIndex = uvElement->GetIndexArray().GetAt(polyIndexCounter);
+						polyIndexCounter++;
+					}
+				}
 
-			//get texture coordinates
-			FbxVector2 texCoord;
-			bool unmapped;
-			mesh->GetPolygonVertexUV(i, j, uvSetName, texCoord, unmapped);
-			vertex.Tex = XMFLOAT2(static_cast<float>(texCoord[0]), static_cast<float>(texCoord[1]));
-			vertices.push_back(vertex);
-			indices.push_back(vertices.size() - 1);
+				if (uvIndex != -1) {
+					FbxVector2 uv = uvElement->GetDirectArray().GetAt(uvIndex);
+					vertices[controlPointIndex].Tex = XMFLOAT2((float)uv[0], -(float)uv[1]);
+				}
+			}
 		}
-
 	}
+
+	// Procesar índices
+	for (int i = 0; i < mesh->GetPolygonCount(); i++) {
+		for (int j = 0; j < mesh->GetPolygonSize(i); j++) {
+			indices.push_back(mesh->GetPolygonVertex(i, j));
+		}
+	}
+
+	Mesh meshData;
+	meshData.vertex = vertices;
+	meshData.index = indices;
+	meshData.name = node->GetName();
+	meshData.numVertex = vertices.size();
+	meshData.numIndex = indices.size();
+
+	meshes.push_back(meshData);
+
+}
+
+void ModelLoader::ProcessMaterials(FbxSurfaceMaterial* material)
+{
+	if (material)
+	{
+		FbxProperty prop = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+		if (prop.IsValid())
+		{
+			int textureCount = prop.GetSrcObjectCount < FbxTexture>();
+			for (int i = 0; i < textureCount; ++i)
+			{
+				FbxTexture* texture = FbxCast<FbxTexture>(prop.GetSrcObject<FbxTexture>(i));
+				if (texture)
+				{
+					textureFileNames.push_back(texture->GetName());
+				}
+			}
+		}
+	}
+
 }

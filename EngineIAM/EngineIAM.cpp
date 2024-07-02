@@ -33,14 +33,19 @@ DepthStencilView                    g_depthStencilView;
 RenderTargetView                    g_renderTargetView;
 Viewport                            g_viewport;
 ShaderProgram                       g_ShaderProgram;
-Buffer                              g_vertexBuffer;
-Buffer                              g_indexBuffer;
+
+std::vector<Buffer>                 g_vertexBuffers;
+std::vector<Buffer>                 g_indexBuffers;
+
 Buffer                              g_CBBufferNeverChanges;
 Buffer                              g_CBBufferChangeOnResize;
 Buffer                              g_CBBufferChangesEveryFrame;
-Texture                             g_modelTexture;
+
+std::vector<Texture>                modelTextures;
+
 SamplerState                        g_sampler;
 ModelLoader                         g_model;
+Texture                             g_default;
 
 
 XMMATRIX                            g_World;
@@ -160,33 +165,44 @@ HRESULT InitDevice()
 
     g_ShaderProgram.init(g_device, "EngineIAM.fx", Layout);
 
-    g_model.LoadModel("Models/Dragon.fbx");
-    // Create vertex buffer
-    g_mesh.name = "HollowKnight";
-    g_mesh.vertex = g_model.GetVertices();
+    g_model.LoadModel("Models/Vela2.fbx");
 
-    /*for (const SimpleVertex& vertex : vertices)
+
+    // Create vertex buffer
+    for (auto& mesh : g_model.meshes)
     {
-        g_mesh.vertex.push_back(vertex);
-    }*/
+        Buffer vertexBuffer;
+        vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
+        g_vertexBuffers.push_back(vertexBuffer);
+        /*g_mesh.name = "HollowKnight";
+        g_mesh.vertex = g_model.GetVertices();*/
 
-    //// NOTA: El static_cast<unsigned int›
-    //se está utilizando aquí para convertir el resultado del método size() 
-    //    de un std::vector a un tipo unsigned int.
-    //    El método size() devuelve un valor del tipo std::size_t, 
-    //    que es un tipo específico de tamaño no negativo.En algunas 
-    //    plataformas, std : size_t puede ser de un tamaño diferente a unsigned int. /
-      
-   g_mesh.numVertex  = static_cast<unsigned int>(g_mesh.vertex.size());
-    // Create vertex buffer
-    g_vertexBuffer.init(g_device, g_mesh, D3D11_BIND_VERTEX_BUFFER);
+        /*for (const SimpleVertex& vertex : vertices)
+        {
+            g_mesh.vertex.push_back(vertex);
+        }*/
 
-    // Create index buffer
-    g_mesh.index = g_model.GetIndices();
-    g_mesh.numIndex = static_cast<unsigned int>(g_mesh.index.size());
-   
+        //// NOTA: El static_cast<unsigned int›
+        //se está utilizando aquí para convertir el resultado del método size() 
+        //    de un std::vector a un tipo unsigned int.
+        //    El método size() devuelve un valor del tipo std::size_t, 
+        //    que es un tipo específico de tamaño no negativo.En algunas 
+        //    plataformas, std : size_t puede ser de un tamaño diferente a unsigned int. /
 
-    g_indexBuffer.init(g_device, g_mesh, D3D11_BIND_INDEX_BUFFER);
+       //g_mesh.numVertex  = static_cast<unsigned int>(g_mesh.vertex.size());
+       // // Create vertex buffer
+       // g_vertexBuffer.init(g_device, g_mesh, D3D11_BIND_VERTEX_BUFFER);
+
+       // // Create index buffer
+        Buffer indexBuffer;
+        indexBuffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
+        g_indexBuffers.push_back(indexBuffer);
+    }
+   // g_mesh.index = g_model.GetIndices();
+   // g_mesh.numIndex = static_cast<unsigned int>(g_mesh.index.size());
+   //
+
+   // g_indexBuffer.init(g_device, g_mesh, D3D11_BIND_INDEX_BUFFER);
 
     // Inicialización de Constant Buffers
     g_CBBufferNeverChanges.init(g_device, sizeof(CBNeverChanges));
@@ -196,8 +212,9 @@ HRESULT InitDevice()
     g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));
 
 
-    // Load the Texture
-    g_modelTexture.init(g_device, "seafloor.dds");
+    g_default.init(g_device, "Textures/Default.png");
+    //// Load the Texture
+    //g_modelTexture.init(g_device, "seafloor.dds");
     //Create SamplerState
     g_sampler.init(g_device);
 
@@ -230,12 +247,23 @@ void CleanupDevice()
     if (g_deviceContext.m_deviceContext) g_deviceContext.m_deviceContext->ClearState();
     
     g_sampler.destroy();
-    g_modelTexture.destroy();
+    for (auto& tex : modelTextures)
+    {
+        tex.destroy();
+    }
+    g_default.destroy();
     g_CBBufferNeverChanges.destroy();
     g_CBBufferChangeOnResize.destroy();
     g_CBBufferChangesEveryFrame.destroy();
-    g_vertexBuffer.destroy();
-    g_indexBuffer.destroy();
+  
+    for (auto& vertexBuffer : g_vertexBuffers)
+    {
+        vertexBuffer.destroy();
+    }
+    for (auto& indexBuffer : g_indexBuffers)
+    {
+        indexBuffer.destroy();
+    }
 
     g_ShaderProgram.destroy();
 
@@ -280,11 +308,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 void Update(float DeltaTime)
 {
     // Rotate cube around the origin
-    g_World = XMMatrixRotationY(DeltaTime);
+    g_World = XMMatrixRotationZ(DeltaTime);
     // Modify the color
-    g_vMeshColor.x = (sinf(DeltaTime * 1.0f) + 1.0f) * 0.5f;
+   /* g_vMeshColor.x = (sinf(DeltaTime * 1.0f) + 1.0f) * 0.5f;
     g_vMeshColor.y = (cosf(DeltaTime * 3.0f) + 1.0f) * 0.5f;
-    g_vMeshColor.z = (sinf(DeltaTime * 5.0f) + 1.0f) * 0.5f;
+    g_vMeshColor.z = (sinf(DeltaTime * 5.0f) + 1.0f) * 0.5f;*/
     //Update Constant Buffers
     g_CBBufferNeverChanges.update(g_deviceContext, 0, nullptr, &cbNeverChanges, 0, 0);
     g_CBBufferChangeOnResize.update(g_deviceContext, 0, nullptr, &cbChangesOnResize, 0, 0);
@@ -307,22 +335,35 @@ void Render()
     //g_deviceContext.m_deviceContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
     g_depthStencilView.render(g_deviceContext);
     
-    // Render the cube
-    //
-    g_ShaderProgram.render(g_deviceContext);
-    g_vertexBuffer.render(g_deviceContext, 0, 1);
-    g_indexBuffer.render(g_deviceContext, DXGI_FORMAT_R32_UINT);
-  
-    g_CBBufferNeverChanges.render(g_deviceContext, 0, 1); // Slot 0
-    g_CBBufferChangeOnResize.render(g_deviceContext, 1, 1); // Slot 1
-    g_CBBufferChangesEveryFrame.renderModel(g_deviceContext, 2, 1); // Slot 2
-    g_modelTexture.render(g_deviceContext, 0, 1);
-    //g_deviceContext.m_deviceContext->PSSetShaderResources( 0, 1, &g_pTextureRV );
-    g_sampler.render(g_deviceContext, 0, 1);
-    //Set primitve topology
-    g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // Render the models
 
-    g_deviceContext.m_deviceContext->DrawIndexed(g_mesh.numIndex, 0, 0);
+    g_ShaderProgram.render(g_deviceContext);
+   
+    for (size_t i = 0; i < g_model.meshes.size(); i++)
+    {
+        g_vertexBuffers[i].render(g_deviceContext, 0, 1);
+        g_indexBuffers[i].render(g_deviceContext, DXGI_FORMAT_R32_UINT);
+        /*if (i < modelTextures.size() - 1)
+        {
+            modelTextures[i].render(g_deviceContext, 0, 1);
+        }
+        else
+        {
+            g_default.render(g_deviceContext, 0, 1);
+        }*/
+
+        g_default.render(g_deviceContext, 0, 1);
+
+        g_sampler.render(g_deviceContext, 0, 1);
+
+        g_CBBufferNeverChanges.render(g_deviceContext, 0, 1); // Slot 0
+        g_CBBufferChangeOnResize.render(g_deviceContext, 1, 1); // Slot 1
+        g_CBBufferChangesEveryFrame.renderModel(g_deviceContext, 2, 1); // Slot 2
+        //Set primitve topology
+        g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        g_deviceContext.m_deviceContext->DrawIndexed(g_model.meshes[i].numIndex, 0, 0);
+    }
 
 
 

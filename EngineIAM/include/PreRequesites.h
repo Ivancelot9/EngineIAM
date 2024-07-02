@@ -32,11 +32,12 @@
    OutputDebugStringW( os_.str().c_str() );  \
 }
 
-#define ERROR( classObj, method, errorMSG )   \
+#define ERROR( classObj, method, errorMSG )  \
 {                                            \
    std::wostringstream os_;                  \
    os_ << "ERROR : " << classObj << "::" << method << " : " << "  Error in data from params [" << errorMSG << "] \n"; \
    OutputDebugStringW( os_.str().c_str() );  \
+   exit(1);                                  \
 }
 
 
