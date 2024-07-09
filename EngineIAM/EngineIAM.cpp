@@ -212,7 +212,7 @@ HRESULT InitDevice()
     g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));
 
 
-    g_default.init(g_device, "Textures/Default.png");
+    //g_default.init(g_device, "Textures/Default.png", ExtensionType::PNG);
     //// Load the Texture
     //g_modelTexture.init(g_device, "seafloor.dds");
     //Create SamplerState
@@ -220,6 +220,35 @@ HRESULT InitDevice()
 
     // Initialize the world matrices
     g_World = XMMatrixIdentity();
+
+    Texture Vela_Char_BaseColor;
+    Vela_Char_BaseColor.init(g_device, "Textures/Vela/Vela_Char_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Corneas_BaseColor;
+    Vela_Corneas_BaseColor.init(g_device, "Textures/Vela/Vela_Corneas_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Gun_BaseColor;
+    Vela_Gun_BaseColor.init(g_device, "Textures/Vela/Vela_Gun_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Legs_BaseColor;
+    Vela_Legs_BaseColor.init(g_device, "Textures/Vela/Vela_Legs_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Mechanical_BaseColor;
+    Vela_Mechanical_BaseColor.init(g_device, "Textures/Vela/Vela_Mechanical_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Plate_BaseColor;
+    Vela_Plate_BaseColor.init(g_device, "Textures/Vela/Vela_Plate_BaseColor.png", ExtensionType::PNG);
+
+    Texture Vela_Visor_BaseColor;
+    Vela_Visor_BaseColor.init(g_device, "Textures/Vela/Vela_Visor_BaseColor.png", ExtensionType::PNG);
+
+    modelTextures.push_back(Vela_Corneas_BaseColor);
+    modelTextures.push_back(Vela_Gun_BaseColor);
+    modelTextures.push_back(Vela_Visor_BaseColor);
+    modelTextures.push_back(Vela_Legs_BaseColor);
+    modelTextures.push_back(Vela_Mechanical_BaseColor);
+    modelTextures.push_back(Vela_Char_BaseColor);
+    modelTextures.push_back(Vela_Plate_BaseColor);
 
     // Initialize the view matrix
     XMVECTOR Eye = XMVectorSet( 0.0f, 3.0f, -6.0f, 0.0f );
@@ -307,8 +336,17 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //Update everyframe
 void Update(float DeltaTime)
 {
+
     // Rotate cube around the origin
-    g_World = XMMatrixRotationZ(DeltaTime);
+    XMVECTOR translation = XMVectorSet(0.0f, -2.0f, 0.0f, 0.0f); // Traslación en x=1, y=2, z=3
+    XMVECTOR rotation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(260), XMConvertToRadians(DeltaTime * 50), 0.0f); // Rotación en X=180, Y=180, Z=0
+    XMVECTOR scale = XMVectorSet(.03f, .03f, .03f, 0.0f); // Escala por 2 en x, y, z
+
+    // Combinar las transformaciones en una matriz de mundo
+    g_World = XMMatrixScalingFromVector(scale) * XMMatrixRotationQuaternion(rotation) * XMMatrixTranslationFromVector(translation);
+    // Rotate cube around the origin
+
+    //g_World = XMMatrixRotationZ(DeltaTime);
     // Modify the color
    /* g_vMeshColor.x = (sinf(DeltaTime * 1.0f) + 1.0f) * 0.5f;
     g_vMeshColor.y = (cosf(DeltaTime * 3.0f) + 1.0f) * 0.5f;
@@ -316,6 +354,7 @@ void Update(float DeltaTime)
     //Update Constant Buffers
     g_CBBufferNeverChanges.update(g_deviceContext, 0, nullptr, &cbNeverChanges, 0, 0);
     g_CBBufferChangeOnResize.update(g_deviceContext, 0, nullptr, &cbChangesOnResize, 0, 0);
+
     cb.mWorld = XMMatrixTranspose(g_World);
     cb.vMeshColor = g_vMeshColor;
     g_CBBufferChangesEveryFrame.update(g_deviceContext, 0, nullptr, &cb, 0, 0);
@@ -343,14 +382,14 @@ void Render()
     {
         g_vertexBuffers[i].render(g_deviceContext, 0, 1);
         g_indexBuffers[i].render(g_deviceContext, DXGI_FORMAT_R32_UINT);
-        /*if (i < modelTextures.size() - 1)
+        if (i <= modelTextures.size() - 1)
         {
             modelTextures[i].render(g_deviceContext, 0, 1);
         }
         else
         {
             g_default.render(g_deviceContext, 0, 1);
-        }*/
+        }
 
         g_default.render(g_deviceContext, 0, 1);
 

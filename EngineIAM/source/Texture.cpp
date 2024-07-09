@@ -1,27 +1,72 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
 #include "Device.h"
 #include "DeviceContext.h"
+#include "stb_image.h"
 
-HRESULT Texture::init(Device device, std::string textureName)
+HRESULT Texture::init(Device device, std::string textureName, ExtensionType extensionType)
 {
-	HRESULT hr = S_OK;
 	if (device.m_device == nullptr)
 	{
 		ERROR("Texture", "init", "CHECK FOR Device device on texture loading method")
-		exit(1);
 	}
-	// Load the Texture
-	hr = D3DX11CreateShaderResourceViewFromFile(device.m_device, 
-		textureName.c_str(), nullptr, nullptr,
-		&m_textureFromImg, nullptr);
-
-	if (FAILED(hr))
+	HRESULT hr = S_OK;
+	switch (extensionType)
 	{
+	case DDS:
+		hr = D3DX11CreateShaderResourceViewFromFile(device.m_device, textureName.c_str(),
+			nullptr, nullptr, &m_textureFromImg, nullptr);
 
-		ERROR("Texture", "init", "Error in data from params [Check For string textureName -> Verifi correct texture name in file")
-			exit(1);
+		if (FAILED(hr))
+		{
+			ERROR("Texture", "init", "Error in data from paramas [Check for string textureName -> Verify correct texture Name")
+		}break;
+	case PNG:
+		int width, height, channels;
+		//Cargar la imagen
+		unsigned char* data = stbi_load(textureName.c_str(), &width, &height, &channels, 4); // 4 for RGBA
+		if (!data)
+		{
+			ERROR("Texture", "stbi_load", "Error al cargar la imagen" << stbi_failure_reason())
+				return E_FAIL;
+		}
+
+		//Descripcion de la Textura
+		D3D11_TEXTURE2D_DESC texturesDesc = {};
+		texturesDesc.Width = width;
+		texturesDesc.Height = height;
+		texturesDesc.MipLevels = 1;
+		texturesDesc.ArraySize = 1;
+		texturesDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		texturesDesc.SampleDesc.Count = 1;
+		texturesDesc.Usage = D3D11_USAGE_DEFAULT;
+		texturesDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		//Datos de la sobrecarga
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = data;
+		initData.SysMemPitch = width * 4;
+
+		ID3D11Texture2D* texture = nullptr;
+		hr = device.CreateTexture2D(&texturesDesc, &initData, &texture);
+		if (FAILED(hr))
+		{
+			stbi_image_free(data);
+			return hr;
+		}
+
+		//Descripción del recurso de la textura
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texturesDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		hr = device.m_device->CreateShaderResourceView(texture, &srvDesc, &m_textureFromImg);
+		texture->Release();
+		stbi_image_free(data);
+		break;
 	}
-		return hr;
+	return hr;
+	
 }
 
 void Texture::init(Device device,

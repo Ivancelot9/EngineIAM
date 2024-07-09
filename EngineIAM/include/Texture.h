@@ -15,7 +15,7 @@ public:
 	/// Brief: Crea una textura a partir de una imagen (.dds) desde nuestro ordenador
 	/// <param name="device"></param> Lllamamos al DEvice paea poder generar recuersos en la memoria
 	/// <param name="textureName"></param>Almacenar el nombre de la textura
-	HRESULT init(Device device, std::string textureName);
+	HRESULT init(Device device, std::string textureName, ExtensionType extensionType);
 	/// <summary>
 /// Brief: Este metodo es el reposable de crear Textura en 2D 
 /// </summary>
