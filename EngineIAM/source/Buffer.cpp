@@ -2,28 +2,21 @@
 #include "Device.h"
 #include "DeviceContext.h"
 
-#include "Buffer.h"
-#include "Device.h"
-#include "DeviceContext.h"
-
-// Private method to create buffer
-void
-Buffer::createBuffer(Device& device,
-    D3D11_BUFFER_DESC& desc,
-    D3D11_SUBRESOURCE_DATA* initData) {
+// Método privado para crear un buffer
+void Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, D3D11_SUBRESOURCE_DATA* initData) {
     HRESULT hr = device.CreateBuffer(&desc, initData, &m_buffer);
     if (FAILED(hr)) {
         ERROR("Buffer", "createBuffer", "CHECK FOR method createBuffer()");
     }
 }
 
-void
-Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
+// Inicializa el buffer con un mesh y un bindFlag específico
+void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
     if (device.m_device == nullptr) {
         ERROR("Buffer", "init", "CHECK FOR Device device");
     }
 
-    // Validate mesh data based on bindFlag
+    // Validar datos del mesh según el bindFlag
     if ((bindFlag == D3D11_BIND_VERTEX_BUFFER && mesh.vertex.empty()) ||
         (bindFlag == D3D11_BIND_INDEX_BUFFER && mesh.index.empty())) {
         ERROR("Buffer", "init", "CHECK FOR Mesh mesh");
@@ -36,6 +29,7 @@ Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
     desc.CPUAccessFlags = 0;
     m_bindFlag = bindFlag;
 
+    // Configurar el buffer según el bindFlag
     if (bindFlag == D3D11_BIND_VERTEX_BUFFER) {
         m_stride = sizeof(SimpleVertex);
         desc.ByteWidth = m_stride * static_cast<unsigned int>(mesh.vertex.size());
@@ -52,8 +46,8 @@ Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
     createBuffer(device, desc, &InitData);
 }
 
-void
-Buffer::init(Device device, unsigned int ByteWidth) {
+// Inicializa un buffer con un tamaño específico en bytes
+void Buffer::init(Device device, unsigned int ByteWidth) {
     if (device.m_device == nullptr || ByteWidth == 0) {
         ERROR("Buffer", "init", "CHECK FOR parameters");
     }
@@ -69,37 +63,19 @@ Buffer::init(Device device, unsigned int ByteWidth) {
     createBuffer(device, desc, nullptr);
 }
 
-void
-Buffer::update(DeviceContext& deviceContext,
-    unsigned int DstSubresource,
-    const D3D11_BOX* pDstBox,
-    const void* pSrcData,
-    unsigned int SrcRowPitch,
-    unsigned int SrcDepthPitch) {
-    deviceContext.UpdateSubresource(m_buffer,
-        DstSubresource,
-        pDstBox,
-        pSrcData,
-        SrcRowPitch,
-        SrcDepthPitch);
+// Actualiza el buffer con nuevos datos
+void Buffer::update(DeviceContext& deviceContext, unsigned int DstSubresource, const D3D11_BOX* pDstBox, const void* pSrcData, unsigned int SrcRowPitch, unsigned int SrcDepthPitch) {
+    deviceContext.UpdateSubresource(m_buffer, DstSubresource, pDstBox, pSrcData, SrcRowPitch, SrcDepthPitch);
 }
 
-void
-Buffer::render(DeviceContext& deviceContext,
-    unsigned int StartSlot,
-    unsigned int NumBuffers) {
+// Renderiza el buffer en el contexto del dispositivo
+void Buffer::render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumBuffers) {
     switch (m_bindFlag) {
     case D3D11_BIND_VERTEX_BUFFER:
-        deviceContext.IASetVertexBuffers(StartSlot,
-            NumBuffers,
-            &m_buffer,
-            &m_stride,
-            &m_offset);
+        deviceContext.IASetVertexBuffers(StartSlot, NumBuffers, &m_buffer, &m_stride, &m_offset);
         break;
     case D3D11_BIND_CONSTANT_BUFFER:
-        deviceContext.m_deviceContext->VSSetConstantBuffers(StartSlot,
-            NumBuffers,
-            &m_buffer);
+        deviceContext.m_deviceContext->VSSetConstantBuffers(StartSlot, NumBuffers, &m_buffer);
         break;
     default:
         ERROR("Buffer", "render", "CHECK FOR Unsupported BindFlag");
@@ -107,8 +83,8 @@ Buffer::render(DeviceContext& deviceContext,
     }
 }
 
-void
-Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
+// Renderiza un index buffer con un formato específico
+void Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
     if (m_bindFlag == D3D11_BIND_INDEX_BUFFER) {
         deviceContext.IASetIndexBuffer(m_buffer, format, m_offset);
     }
@@ -117,20 +93,13 @@ Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
     }
 }
 
-void
-Buffer::renderModel(DeviceContext& deviceContext,
-    unsigned int StartSlot,
-    unsigned int NumBuffers) {
-    deviceContext.m_deviceContext->VSSetConstantBuffers(StartSlot,
-        NumBuffers,
-        &m_buffer);
-
-    deviceContext.m_deviceContext->PSSetConstantBuffers(StartSlot,
-        NumBuffers,
-        &m_buffer);
+// Renderiza el modelo utilizando constant buffers en los shaders de vértices y píxeles
+void Buffer::renderModel(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumBuffers) {
+    deviceContext.m_deviceContext->VSSetConstantBuffers(StartSlot, NumBuffers, &m_buffer);
+    deviceContext.m_deviceContext->PSSetConstantBuffers(StartSlot, NumBuffers, &m_buffer);
 }
 
-void
-Buffer::destroy() {
+// Libera los recursos del buffer
+void Buffer::destroy() {
     SAFE_RELEASE(m_buffer);
 }

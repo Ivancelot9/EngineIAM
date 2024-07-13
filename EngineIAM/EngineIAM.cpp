@@ -5,58 +5,58 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
-#include "PreRequesites.h"
-#include "Window.h"
-#include "Device.h"
-#include "DeviceContext.h"
-#include "SwapChain.h"
-#include "Texture.h"
-#include "DepthStencilView.h"
-#include "RenderTargetView.h"
-#include "Viewport.h"
-#include "ShaderProgram.h"
-#include "Buffer.h"
-#include "SamplerState.h"
-#include "ModelLoader.h"
-#include "fbxsdk.h"
+#include "PreRequesites.h"  // Archivo de encabezado que contiene pre-requisitos
+#include "Window.h"         // Archivo de encabezado para la ventana
+#include "Device.h"         // Archivo de encabezado para el dispositivo
+#include "DeviceContext.h"  // Archivo de encabezado para el contexto del dispositivo
+#include "SwapChain.h"      // Archivo de encabezado para la cadena de intercambio
+#include "Texture.h"        // Archivo de encabezado para las texturas
+#include "DepthStencilView.h" // Archivo de encabezado para la vista de stencil de profundidad
+#include "RenderTargetView.h" // Archivo de encabezado para la vista de destino de renderizado
+#include "Viewport.h"       // Archivo de encabezado para el viewport
+#include "ShaderProgram.h"  // Archivo de encabezado para el programa de shaders
+#include "Buffer.h"         // Archivo de encabezado para el buffer
+#include "SamplerState.h"   // Archivo de encabezado para el estado del sampler
+#include "ModelLoader.h"    // Archivo de encabezado para cargar modelos
+#include "fbxsdk.h"         // Archivo de encabezado para el SDK de FBX
 
 //--------------------------------------------------------------------------------------
-// Global Variables
+// Variables globales
 //--------------------------------------------------------------------------------------
-Window                              g_window;
-Device                              g_device;
-DeviceContext                       g_deviceContext;
-SwapChain                           g_swapchain;
-Texture                             g_backBuffer;
-Texture                             g_depthStencil;
-DepthStencilView                    g_depthStencilView;
-RenderTargetView                    g_renderTargetView;
-Viewport                            g_viewport;
-ShaderProgram                       g_ShaderProgram;
+Window                              g_window;                    // Ventana
+Device                              g_device;                    // Dispositivo
+DeviceContext                       g_deviceContext;             // Contexto del dispositivo
+SwapChain                           g_swapchain;                 // Cadena de intercambio
+Texture                             g_backBuffer;                // Textura de buffer trasero
+Texture                             g_depthStencil;              // Textura de stencil de profundidad
+DepthStencilView                    g_depthStencilView;          // Vista de stencil de profundidad
+RenderTargetView                    g_renderTargetView;          // Vista de destino de renderizado
+Viewport                            g_viewport;                  // Viewport
+ShaderProgram                       g_ShaderProgram;             // Programa de shaders
 
-std::vector<Buffer>                 g_vertexBuffers;
-std::vector<Buffer>                 g_indexBuffers;
+std::vector<Buffer>                 g_vertexBuffers;             // Vectores de buffers de vértices
+std::vector<Buffer>                 g_indexBuffers;              // Vectores de buffers de índices
 
-Buffer                              g_CBBufferNeverChanges;
-Buffer                              g_CBBufferChangeOnResize;
-Buffer                              g_CBBufferChangesEveryFrame;
+Buffer                              g_CBBufferNeverChanges;      // Buffer constante que nunca cambia
+Buffer                              g_CBBufferChangeOnResize;    // Buffer constante que cambia al redimensionar
+Buffer                              g_CBBufferChangesEveryFrame; // Buffer constante que cambia cada cuadro
 
-std::vector<Texture>                modelTextures;
+std::vector<Texture>                modelTextures;               // Texturas del modelo
 
-SamplerState                        g_sampler;
-ModelLoader                         g_model;
-Texture                             g_default;
+SamplerState                        g_sampler;                   // Estado del sampler
+ModelLoader                         g_model;                     // Cargador de modelos
+Texture                             g_default;                   // Textura predeterminada
 
+XMMATRIX                            g_World;                     // Matriz de mundo
+XMMATRIX                            g_View;                      // Matriz de vista
+XMMATRIX                            g_Projection;                // Matriz de proyección
+XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f); // Color del modelo
 
-XMMATRIX                            g_World;
-XMMATRIX                            g_View;
-XMMATRIX                            g_Projection;
-XMFLOAT4                            g_vMeshColor( 0.7f, 0.7f, 0.7f, 1.0f );
+Mesh                                g_mesh;                      // Malla del modelo
+CBNeverChanges                      cbNeverChanges;              // Estructura de constantes que nunca cambian
+CBChangeOnResize                    cbChangesOnResize;           // Estructura de constantes que cambian al redimensionar
+CBChangesEveryFrame                 cb;                          // Estructura de constantes que cambian cada cuadro
 
-Mesh                                g_mesh;
-CBNeverChanges                      cbNeverChanges;
-CBChangeOnResize                    cbChangesOnResize;
-CBChangesEveryFrame                 cb;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
