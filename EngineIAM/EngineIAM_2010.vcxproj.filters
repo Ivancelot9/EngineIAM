@@ -18,6 +18,15 @@
     <Filter Include="Source">
       <UniqueIdentifier>{0f25e75e-62a3-49b5-8bfe-9f8cc4c2b10f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{64ce036d-84bd-4cbc-937a-294bae4a6dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\include">
+      <UniqueIdentifier>{c210834e-2eb0-48b0-a618-dafddcb75254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\sources">
+      <UniqueIdentifier>{5b6b1151-9806-4825-9808-c94003e27a5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BaseApp.h">
@@ -68,6 +77,33 @@
     <ClInclude Include="include\stb_image.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="imgui-docking\backends\imgui_impl_dx11.h">
+      <Filter>Imgui\sources</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\backends\imgui_impl_win32.h">
+      <Filter>Imgui\sources</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imconfig.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imgui.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imgui_internal.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imstb_rectpack.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imstb_textedit.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-docking\imstb_truetype.h">
+      <Filter>Imgui\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UserInterface.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
@@ -109,6 +145,30 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\ModelLoader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\imgui.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\imgui_demo.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\imgui_draw.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\imgui_tables.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\imgui_widgets.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\backends\imgui_impl_dx11.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-docking\backends\imgui_impl_win32.cpp">
+      <Filter>Imgui\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UserInterface.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

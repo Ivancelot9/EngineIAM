@@ -19,6 +19,7 @@
 #include "SamplerState.h"   // Archivo de encabezado para el estado del sampler
 #include "ModelLoader.h"    // Archivo de encabezado para cargar modelos
 #include "fbxsdk.h"         // Archivo de encabezado para el SDK de FBX
+#include "UserInterface.h" //Archivo de cabeza
 
 //--------------------------------------------------------------------------------------
 // Variables globales
@@ -42,7 +43,7 @@ Buffer                              g_CBBufferChangeOnResize;    // Buffer const
 Buffer                              g_CBBufferChangesEveryFrame; // Buffer constante que cambia cada cuadro
 
 std::vector<Texture>                modelTextures;               // Texturas del modelo
-
+UserInterface                       g_UserInterface;
 SamplerState                        g_sampler;                   // Estado del sampler
 ModelLoader                         g_model;                     // Cargador de modelos
 Texture                             g_default;                   // Textura predeterminada
@@ -174,35 +175,13 @@ HRESULT InitDevice()
         Buffer vertexBuffer;
         vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
         g_vertexBuffers.push_back(vertexBuffer);
-        /*g_mesh.name = "HollowKnight";
-        g_mesh.vertex = g_model.GetVertices();*/
-
-        /*for (const SimpleVertex& vertex : vertices)
-        {
-            g_mesh.vertex.push_back(vertex);
-        }*/
-
-        //// NOTA: El static_cast<unsigned int›
-        //se está utilizando aquí para convertir el resultado del método size() 
-        //    de un std::vector a un tipo unsigned int.
-        //    El método size() devuelve un valor del tipo std::size_t, 
-        //    que es un tipo específico de tamaño no negativo.En algunas 
-        //    plataformas, std : size_t puede ser de un tamaño diferente a unsigned int. /
-
-       //g_mesh.numVertex  = static_cast<unsigned int>(g_mesh.vertex.size());
-       // // Create vertex buffer
-       // g_vertexBuffer.init(g_device, g_mesh, D3D11_BIND_VERTEX_BUFFER);
-
+       
        // // Create index buffer
         Buffer indexBuffer;
         indexBuffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
         g_indexBuffers.push_back(indexBuffer);
     }
-   // g_mesh.index = g_model.GetIndices();
-   // g_mesh.numIndex = static_cast<unsigned int>(g_mesh.index.size());
-   //
-
-   // g_indexBuffer.init(g_device, g_mesh, D3D11_BIND_INDEX_BUFFER);
+  
 
     // Inicialización de Constant Buffers
     g_CBBufferNeverChanges.init(g_device, sizeof(CBNeverChanges));
@@ -211,10 +190,6 @@ HRESULT InitDevice()
 
     g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));
 
-
-    //g_default.init(g_device, "Textures/Default.png", ExtensionType::PNG);
-    //// Load the Texture
-    //g_modelTexture.init(g_device, "seafloor.dds");
     //Create SamplerState
     g_sampler.init(g_device);
 
@@ -263,7 +238,7 @@ HRESULT InitDevice()
     g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV4, g_window.m_width / (FLOAT)g_window.m_height, 0.01f, 100.0f );
     
     cbChangesOnResize.mProjection = XMMatrixTranspose( g_Projection );
-
+    g_UserInterface.init(g_window.m_hWnd, g_device.m_device, g_deviceContext.m_deviceContext);
     return S_OK;
 }
 
@@ -303,6 +278,7 @@ void CleanupDevice()
 
     g_swapchain.destroy();
     g_deviceContext.destroy();
+    g_UserInterface.destroy();
     g_device.destroy();
 
 }
@@ -310,8 +286,11 @@ void CleanupDevice()
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
     PAINTSTRUCT ps;
     HDC hdc;
 
@@ -336,7 +315,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //Update everyframe
 void Update(float DeltaTime)
 {
+    g_UserInterface.update();
+    bool show_demo_window = true;
 
+   ImGui::ShowDemoWindow(&show_demo_window);
+    //ImGui::Begin("Test");
+
+   /* ImGui::End(); */
     // Rotate cube around the origin
     XMVECTOR translation = XMVectorSet(0.0f, -2.0f, 0.0f, 0.0f); // Traslación en x=1, y=2, z=3
     XMVECTOR rotation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(260), XMConvertToRadians(DeltaTime * 50), 0.0f); // Rotación en X=180, Y=180, Z=0
@@ -407,6 +392,6 @@ void Render()
 
 
 
-   
+    g_UserInterface.render();
     g_swapchain.present();
 }
