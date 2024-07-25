@@ -331,11 +331,6 @@ void Update(float DeltaTime)
     g_World = XMMatrixScalingFromVector(scale) * XMMatrixRotationQuaternion(rotation) * XMMatrixTranslationFromVector(translation);
     // Rotate cube around the origin
 
-    //g_World = XMMatrixRotationZ(DeltaTime);
-    // Modify the color
-   /* g_vMeshColor.x = (sinf(DeltaTime * 1.0f) + 1.0f) * 0.5f;
-    g_vMeshColor.y = (cosf(DeltaTime * 3.0f) + 1.0f) * 0.5f;
-    g_vMeshColor.z = (sinf(DeltaTime * 5.0f) + 1.0f) * 0.5f;*/
     //Update Constant Buffers
     g_CBBufferNeverChanges.update(g_deviceContext, 0, nullptr, &cbNeverChanges, 0, 0);
     g_CBBufferChangeOnResize.update(g_deviceContext, 0, nullptr, &cbChangesOnResize, 0, 0);

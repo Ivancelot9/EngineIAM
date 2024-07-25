@@ -104,6 +104,18 @@
     <ClInclude Include="include\UserInterface.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Entity.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MeshComponent.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Actor.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineIAM.cpp" />
