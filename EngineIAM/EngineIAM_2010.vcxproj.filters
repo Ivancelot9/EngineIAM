@@ -27,6 +27,27 @@
     <Filter Include="Imgui\sources">
       <UniqueIdentifier>{5b6b1151-9806-4825-9808-c94003e27a5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\ECS">
+      <UniqueIdentifier>{8777685e-1cfd-4b92-8fb8-f0180f47e63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities">
+      <UniqueIdentifier>{9b826f8b-b548-4258-b055-9a25d9b029bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities\Matrix">
+      <UniqueIdentifier>{57674e39-725e-4a08-9980-a301b9587adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities\Memory">
+      <UniqueIdentifier>{406a5ab8-6bb8-49fe-8544-d3995a8cabc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities\Utilities">
+      <UniqueIdentifier>{83ba726d-56db-4ded-8c45-072918bd05a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities\Structures">
+      <UniqueIdentifier>{24abdf76-9261-4128-817a-bfed72031fd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utilities\Vectors">
+      <UniqueIdentifier>{ffadd6e5-ec7d-4887-8969-cda25276ffb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BaseApp.h">
@@ -104,17 +125,68 @@
     <ClInclude Include="include\UserInterface.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Actor.h">
+      <Filter>include\ECS</Filter>
+    </ClInclude>
     <ClInclude Include="include\Entity.h">
-      <Filter>include</Filter>
+      <Filter>include\ECS</Filter>
     </ClInclude>
     <ClInclude Include="include\Component.h">
-      <Filter>include</Filter>
+      <Filter>include\ECS</Filter>
     </ClInclude>
     <ClInclude Include="include\MeshComponent.h">
-      <Filter>include</Filter>
+      <Filter>include\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="include\Actor.h">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Transform.h">
+      <Filter>include\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Matrix\Matrix2x2.h">
+      <Filter>include\Utilities\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Matrix\Matrix3x3.h">
+      <Filter>include\Utilities\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Matrix\Matrix4x4.h">
+      <Filter>include\Utilities\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Memory\TSharedPointer.h">
+      <Filter>include\Utilities\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Memory\TStaticPtr.h">
+      <Filter>include\Utilities\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Memory\TUniquePtr.h">
+      <Filter>include\Utilities\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Memory\TWeakPointer.h">
+      <Filter>include\Utilities\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Utilities\EngineMath.h">
+      <Filter>include\Utilities\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Structures\TArray.h">
+      <Filter>include\Utilities\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Structures\TMap.h">
+      <Filter>include\Utilities\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Structures\TPair.h">
+      <Filter>include\Utilities\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Structures\TSet.h">
+      <Filter>include\Utilities\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Vectors\Quaternion.h">
+      <Filter>include\Utilities\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Vectors\Vector2.h">
+      <Filter>include\Utilities\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Vectors\Vector3.h">
+      <Filter>include\Utilities\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities\Vectors\Vector4.h">
+      <Filter>include\Utilities\Vectors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +253,12 @@
       <Filter>Imgui\sources</Filter>
     </ClCompile>
     <ClCompile Include="source\UserInterface.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Actor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Transform.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

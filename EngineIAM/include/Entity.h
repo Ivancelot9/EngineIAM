@@ -1,7 +1,7 @@
 #pragma once
 #include "PreRequesites.h"
 #include "Component.h"
-//#include "Trandform.h"
+//#include "Transform.h"
 
 class DeviceContext;
 class Entity
@@ -14,7 +14,7 @@ public:
 	template <typename T>
 	void addComponent(std::shared_ptr<T> component) {
 
-		static assert(std:is_base_of<Component, T::value, "T must be derived free Component");
+		static_assert(std::is_base_of <Component, T>::value, "T must be derived free Component");
 		components.push_back(component);
 	}
 
@@ -34,7 +34,7 @@ public:
 
 
 
-private:
+protected:
 	bool isActive; //Indica si la entidad esta activada
 	std::string id; //Identificador unico de la identidad
 	std::vector<std::shared_ptr<Component>> components; //Lista de componentes de la identidad

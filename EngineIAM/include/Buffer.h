@@ -3,7 +3,7 @@
 
 class Device;
 class DeviceContext;
-
+class MeshComponent;
 ///                <summary>
 /// Buffer:es un área de memoria que se utiliza para 
 /// almacenar datos temporales mientras se procesan. 
@@ -17,7 +17,7 @@ public:
 	~Buffer() = default;
 
 	//Inicializa vertex y index buffers
-	void init(Device device, Mesh mesh, unsigned int bindFlag);
+	void init(Device device, MeshComponent mesh, unsigned int bindFlag);
 
 	//Inicializa los Constant Buffers
 	void init(Device device, unsigned int ByteWidth);

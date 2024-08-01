@@ -1,6 +1,7 @@
 #include "Buffer.h"
 #include "Device.h"
 #include "DeviceContext.h"
+#include "MeshComponent.h"
 
 // Método privado para crear un buffer
 void Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, D3D11_SUBRESOURCE_DATA* initData) {
@@ -11,14 +12,14 @@ void Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, D3D11_SUBRESO
 }
 
 // Inicializa el buffer con un mesh y un bindFlag específico
-void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
+void Buffer::init(Device device, MeshComponent mesh, unsigned int bindFlag) {
     if (device.m_device == nullptr) {
         ERROR("Buffer", "init", "CHECK FOR Device device");
     }
 
     // Validar datos del mesh según el bindFlag
-    if ((bindFlag == D3D11_BIND_VERTEX_BUFFER && mesh.vertex.empty()) ||
-        (bindFlag == D3D11_BIND_INDEX_BUFFER && mesh.index.empty())) {
+    if ((bindFlag == D3D11_BIND_VERTEX_BUFFER && mesh.m_vertex.empty()) ||
+        (bindFlag == D3D11_BIND_INDEX_BUFFER && mesh.m_index.empty())) {
         ERROR("Buffer", "init", "CHECK FOR Mesh mesh");
     }
 
@@ -32,15 +33,15 @@ void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag) {
     // Configurar el buffer según el bindFlag
     if (bindFlag == D3D11_BIND_VERTEX_BUFFER) {
         m_stride = sizeof(SimpleVertex);
-        desc.ByteWidth = m_stride * static_cast<unsigned int>(mesh.vertex.size());
+        desc.ByteWidth = m_stride * static_cast<unsigned int>(mesh.m_vertex.size());
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        InitData.pSysMem = mesh.vertex.data();
+        InitData.pSysMem = mesh.m_vertex.data();
     }
     else if (bindFlag == D3D11_BIND_INDEX_BUFFER) {
         m_stride = sizeof(unsigned int);
-        desc.ByteWidth = m_stride * static_cast<unsigned int>(mesh.index.size());
+        desc.ByteWidth = m_stride * static_cast<unsigned int>(mesh.m_index.size());
         desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        InitData.pSysMem = mesh.index.data();
+        InitData.pSysMem = mesh.m_index.data();
     }
 
     createBuffer(device, desc, &InitData);

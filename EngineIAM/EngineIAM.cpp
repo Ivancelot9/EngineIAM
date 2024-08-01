@@ -18,8 +18,10 @@
 #include "Buffer.h"         // Archivo de encabezado para el buffer
 #include "SamplerState.h"   // Archivo de encabezado para el estado del sampler
 #include "ModelLoader.h"    // Archivo de encabezado para cargar modelos
-#include "fbxsdk.h"         // Archivo de encabezado para el SDK de FBX
+//#include "fbxsdk.h"         // Archivo de encabezado para el SDK de FBX
 #include "UserInterface.h" //Archivo de cabeza
+#include "Actor.h"
+//#include <Transform.h>
 
 //--------------------------------------------------------------------------------------
 // Variables globales
@@ -47,25 +49,30 @@ UserInterface                       g_UserInterface;
 SamplerState                        g_sampler;                   // Estado del sampler
 ModelLoader                         g_model;                     // Cargador de modelos
 Texture                             g_default;                   // Textura predeterminada
-
-XMMATRIX                            g_World;                     // Matriz de mundo
 XMMATRIX                            g_View;                      // Matriz de vista
 XMMATRIX                            g_Projection;                // Matriz de proyección
 XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f); // Color del modelo
-
-Mesh                                g_mesh;                      // Malla del modelo
+//MeshComponent                       MC;
+//Mesh                                g_mesh;                      // Malla del modelo
 CBNeverChanges                      cbNeverChanges;              // Estructura de constantes que nunca cambian
 CBChangeOnResize                    cbChangesOnResize;           // Estructura de constantes que cambian al redimensionar
 CBChangesEveryFrame                 cb;                          // Estructura de constantes que cambian cada cuadro
 
-//--------------------------------------------------------------------------------------
+
+//EngineUtilities::TSharedPointer<Actor> grid;
+EngineUtilities::TSharedPointer<Actor> AVela;
+//std::vector<Texture> gridTexs;
+
+//EngineUtilities
+//---------------
+// -----------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
 HRESULT InitDevice();
 void CleanupDevice();
 LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
 void Render();
-void Update(float DeltaTime);
+void Update(double DeltaTime);
 
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
@@ -169,18 +176,18 @@ HRESULT InitDevice()
     g_model.LoadModel("Models/Vela2.fbx");
 
 
-    // Create vertex buffer
-    for (auto& mesh : g_model.meshes)
-    {
-        Buffer vertexBuffer;
-        vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
-        g_vertexBuffers.push_back(vertexBuffer);
-       
-       // // Create index buffer
-        Buffer indexBuffer;
-        indexBuffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
-        g_indexBuffers.push_back(indexBuffer);
-    }
+    //// Create vertex buffer
+    //for (auto& mesh : g_model.meshes)
+    //{
+    //    Buffer vertexBuffer;
+    //    vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
+    //    g_vertexBuffers.push_back(vertexBuffer);
+    //   
+    //   // // Create index buffer
+    //    Buffer indexBuffer;
+    //    indexBuffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
+    //    g_indexBuffers.push_back(indexBuffer);
+    //}
   
 
     // Inicialización de Constant Buffers
@@ -188,13 +195,13 @@ HRESULT InitDevice()
 
     g_CBBufferChangeOnResize.init(g_device, sizeof(CBChangeOnResize));
 
-    g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));
+    /*g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));*/
 
-    //Create SamplerState
-    g_sampler.init(g_device);
+    ////Create SamplerState
+    //g_sampler.init(g_device);
 
-    // Initialize the world matrices
-    g_World = XMMatrixIdentity();
+    //// Initialize the world matrices
+    //g_World = XMMatrixIdentity();
 
     Texture Vela_Char_BaseColor;
     Vela_Char_BaseColor.init(g_device, "Textures/Vela/Vela_Char_BaseColor.png", ExtensionType::PNG);
@@ -225,6 +232,8 @@ HRESULT InitDevice()
     modelTextures.push_back(Vela_Char_BaseColor);
     modelTextures.push_back(Vela_Plate_BaseColor);
 
+    g_default.init(g_device, "Textures/Default.png", ExtensionType::PNG);
+
     // Initialize the view matrix
     XMVECTOR Eye = XMVectorSet( 0.0f, 3.0f, -6.0f, 0.0f );
     XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
@@ -238,6 +247,37 @@ HRESULT InitDevice()
     g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV4, g_window.m_width / (FLOAT)g_window.m_height, 0.01f, 100.0f );
     
     cbChangesOnResize.mProjection = XMMatrixTranspose( g_Projection );
+
+    // Set Vela Actor
+    AVela = EngineUtilities::MakeShared<Actor>(g_device);
+
+    if (!AVela.isNull()) {
+        MESSAGE("Actor", "Actor", "Actor accessed successfully.")
+
+        AVela->getComponent<Transform>()->setPosition(EngineUtilities::Vector3(-0.9f, -2.0f, 2.0f));
+        AVela->getComponent<Transform>()->setRotation(EngineUtilities::Vector3(XM_PI / -2.0f, 0.0f, XM_PI / 2.0f));
+        AVela->getComponent<Transform>()->setScale(EngineUtilities::Vector3(.03f, .03f, .03f));
+        AVela->setMesh(g_device, g_model.meshes);
+        AVela->setTextures(modelTextures);
+    }
+    else {
+        MESSAGE("Actor", "Actor", "Actor resource not found.")
+    }
+
+   /* grid = EngineUtilities::MakeShared<Actor>(g_device);
+    if (!grid.isNull()) {
+        MESSAGE("Actor", "Actor", "Actor accessed successfully.")
+            std::vector<MeshComponent> gridMesh;
+        gridMesh.push_back(MC);
+        grid->setMesh(g_device, gridMesh);
+        gridTexs.push_back(g_default);
+        grid->setTextures(gridTexs);
+        grid->getComponent<Transform>()->setPosition(EngineUtilities::Vector3(0.0f, -2.0f, 0.0f));
+        grid->getComponent<Transform>()->setScale(EngineUtilities::Vector3(.03f, .03f, .03f));
+    }
+    else {
+        MESSAGE("Actor", "Actor", "Actor resource not found.")
+    }*/
     g_UserInterface.init(g_window.m_hWnd, g_device.m_device, g_deviceContext.m_deviceContext);
     return S_OK;
 }
@@ -249,36 +289,23 @@ HRESULT InitDevice()
 void CleanupDevice()
 {
     if (g_deviceContext.m_deviceContext) g_deviceContext.m_deviceContext->ClearState();
-    
-    g_sampler.destroy();
-    for (auto& tex : modelTextures)
-    {
-        tex.destroy();
-    }
-    g_default.destroy();
+
+    AVela->destroy();
+    //grid->destroy();
+
+    //g_default.destroy();
     g_CBBufferNeverChanges.destroy();
     g_CBBufferChangeOnResize.destroy();
-    g_CBBufferChangesEveryFrame.destroy();
-  
-    for (auto& vertexBuffer : g_vertexBuffers)
-    {
-        vertexBuffer.destroy();
-    }
-    for (auto& indexBuffer : g_indexBuffers)
-    {
-        indexBuffer.destroy();
-    }
 
     g_ShaderProgram.destroy();
-
     g_depthStencil.destroy();
     g_depthStencilView.destroy();
-
     g_renderTargetView.destroy();
-
     g_swapchain.destroy();
     g_deviceContext.destroy();
+    // Release UI
     g_UserInterface.destroy();
+
     g_device.destroy();
 
 }
@@ -313,7 +340,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 }
 
 //Update everyframe
-void Update(float DeltaTime)
+void Update(double DeltaTime)
 {
     g_UserInterface.update();
     bool show_demo_window = true;
@@ -321,23 +348,18 @@ void Update(float DeltaTime)
    ImGui::ShowDemoWindow(&show_demo_window);
     //ImGui::Begin("Test");
 
-   /* ImGui::End(); */
-    // Rotate cube around the origin
-    XMVECTOR translation = XMVectorSet(0.0f, -2.0f, 0.0f, 0.0f); // Traslación en x=1, y=2, z=3
-    XMVECTOR rotation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(260), XMConvertToRadians(DeltaTime * 50), 0.0f); // Rotación en X=180, Y=180, Z=0
-    XMVECTOR scale = XMVectorSet(.03f, .03f, .03f, 0.0f); // Escala por 2 en x, y, z
+   /*ImGui::End();*/
+   // Update constant Buffers
+   g_CBBufferNeverChanges.update(g_deviceContext, 0, nullptr, &cbNeverChanges, 0, 0);
+   g_CBBufferChangeOnResize.update(g_deviceContext, 0, nullptr, &cbChangesOnResize, 0, 0);
 
-    // Combinar las transformaciones en una matriz de mundo
-    g_World = XMMatrixScalingFromVector(scale) * XMMatrixRotationQuaternion(rotation) * XMMatrixTranslationFromVector(translation);
-    // Rotate cube around the origin
-
-    //Update Constant Buffers
-    g_CBBufferNeverChanges.update(g_deviceContext, 0, nullptr, &cbNeverChanges, 0, 0);
-    g_CBBufferChangeOnResize.update(g_deviceContext, 0, nullptr, &cbChangesOnResize, 0, 0);
-
-    cb.mWorld = XMMatrixTranspose(g_World);
-    cb.vMeshColor = g_vMeshColor;
-    g_CBBufferChangesEveryFrame.update(g_deviceContext, 0, nullptr, &cb, 0, 0);
+   // Actualizar info logica del mesh
+   AVela->getComponent<Transform>()->ui_noWindow("Transform");
+   AVela->update(0, g_deviceContext);
+   //grid->update(0, g_deviceContext);
+   //EngineUtilities::Vector3 translation(0.0f, 0.0f, DeltaTime);
+   //AVela->getComponent<Transform>()->translate(translation);
+   //AVela->getComponent<Transform>()->setRotation(Vector3f(XM_PI / -2.0f, DeltaTime, XM_PI / 2.0f));
 }
 //--------------------------------------------------------------------------------------
 // Render a frame
@@ -345,48 +367,44 @@ void Update(float DeltaTime)
 void Render()
 {
     // Clear the back buffer
-    float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red, green, blue, alpha
+    float ClearColor[4] = { 0.85f, 0.85f, 0.85f, 1.0f }; // red, green, blue, alpha
     g_renderTargetView.render(g_deviceContext, g_depthStencilView, 1, ClearColor);
 
+    // Set Viewport
     g_viewport.render(g_deviceContext);
     // Clear the depth buffer to 1.0 (max depth)
-    //
-    //g_deviceContext.m_deviceContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
     g_depthStencilView.render(g_deviceContext);
-    
-    // Render the models
 
+    // Render the cube
     g_ShaderProgram.render(g_deviceContext);
-   
-    for (size_t i = 0; i < g_model.meshes.size(); i++)
-    {
-        g_vertexBuffers[i].render(g_deviceContext, 0, 1);
-        g_indexBuffers[i].render(g_deviceContext, DXGI_FORMAT_R32_UINT);
-        if (i <= modelTextures.size() - 1)
-        {
-            modelTextures[i].render(g_deviceContext, 0, 1);
-        }
-        else
-        {
-            g_default.render(g_deviceContext, 0, 1);
-        }
 
-        g_default.render(g_deviceContext, 0, 1);
+    // Render the models
+    AVela->render(g_deviceContext);
+    //grid->render(g_deviceContext);
 
-        g_sampler.render(g_deviceContext, 0, 1);
+    //for (size_t i = 0; i < 7; i++) {
+    //	//g_vertexBuffers[i].render(g_deviceContext, 0, 1);
+        //g_indexBuffers[i].render(g_deviceContext, DXGI_FORMAT_R32_UINT);
+        //if (i <= modelTextures.size() - 1)
+        //{
+        //	modelTextures[i].render(g_deviceContext, 0, 1);
+        //}
+        //else {
+        //	g_default.render(g_deviceContext, 0, 1);
+        //}
+        //g_default.render(g_deviceContext, 0, 1);
+        //g_sampler.render(g_deviceContext, 0, 1);
+    //
+    //
+    //	//g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //	//g_deviceContext.m_deviceContext->DrawIndexed(g_model.meshes[i].m_numIndex, 0, 0);
+    //}
 
-        g_CBBufferNeverChanges.render(g_deviceContext, 0, 1); // Slot 0
-        g_CBBufferChangeOnResize.render(g_deviceContext, 1, 1); // Slot 1
-        g_CBBufferChangesEveryFrame.renderModel(g_deviceContext, 2, 1); // Slot 2
-        //Set primitve topology
-        g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        g_deviceContext.m_deviceContext->DrawIndexed(g_model.meshes[i].numIndex, 0, 0);
-    }
-
-
-
+    // Actualizar constant buffers
+    g_CBBufferNeverChanges.render(g_deviceContext, 0, 1);
+    g_CBBufferChangeOnResize.render(g_deviceContext, 1, 1);
 
     g_UserInterface.render();
+
     g_swapchain.present();
 }

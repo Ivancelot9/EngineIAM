@@ -4,6 +4,7 @@
 #include "Buffer.h"
 #include "Texture.h"
 #include "SamplerState.h"
+#include "Transform.h"
 
 class Device;
 class MeshComponent;
@@ -43,7 +44,7 @@ private:
 template <typename T>
 inline std::shared_ptr<T> Actor::getComponent()
 {
-	for (auto& componet : componets)
+	for (auto& component : components)
 	{
 		std::shared_ptr<T> specificComponent = std::dynamic_pointer_cast<T>(component);
 		if (specificComponent)

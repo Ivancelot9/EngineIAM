@@ -3,17 +3,20 @@
 #include <string>
 #include <sstream>
 #include <windows.h>
-#include <d3d11.h>
 #include <vector>
+#include <xnamath.h>
+#include <thread>
 
 
 //Librerias DirectX
+#include <d3d11.h>
 #include <d3dx11.h>
 #include <d3dcompiler.h>
-#include <xnamath.h>
+#include "resource.h"
+
 
 //Third Parties
-#include "resource.h"
+#include "Utilities/Memory/TSharedPointer.h"
 
 // MACRO for safe release of resources
 #define SAFE_RELEASE(x) if(x != nullptr) x->Release(); x = nullptr;

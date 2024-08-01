@@ -159,12 +159,12 @@ void ModelLoader::ProcessMesh(FbxNode* node)
     }
 
     // Crear una estructura de malla y almacenarla en el vector de mallas
-    Mesh meshData;
-    meshData.vertex = vertices;
-    meshData.index = indices;
-    meshData.name = node->GetName();
-    meshData.numVertex = vertices.size();
-    meshData.numIndex = indices.size();
+    MeshComponent meshData;
+    meshData.m_vertex = vertices;
+    meshData.m_index = indices;
+    meshData.m_name = node->GetName();
+    meshData.m_numVertex = vertices.size();
+    meshData.m_numIndex = indices.size();
 
     meshes.push_back(meshData);
 }
