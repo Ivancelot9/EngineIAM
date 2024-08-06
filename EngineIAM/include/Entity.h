@@ -23,7 +23,7 @@ public:
 	{
 		for (auto& component : componets)
 		{
-			std::shared_ptr<T> specificComponet = std::dynamic_pointer_cast<T>(componet);
+			std::shared_ptr<T> specificComponet = std::dynamic_pointer_cast<T>(component);
 			if (specificComponet)
 			{
 				return specificComponet;

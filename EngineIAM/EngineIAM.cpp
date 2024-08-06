@@ -52,16 +52,17 @@ Texture                             g_default;                   // Textura pred
 XMMATRIX                            g_View;                      // Matriz de vista
 XMMATRIX                            g_Projection;                // Matriz de proyección
 XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f); // Color del modelo
-//MeshComponent                       MC;
-//Mesh                                g_mesh;                      // Malla del modelo
 CBNeverChanges                      cbNeverChanges;              // Estructura de constantes que nunca cambian
 CBChangeOnResize                    cbChangesOnResize;           // Estructura de constantes que cambian al redimensionar
 CBChangesEveryFrame                 cb;                          // Estructura de constantes que cambian cada cuadro
 
 
-//EngineUtilities::TSharedPointer<Actor> grid;
+//Vela Actor
 EngineUtilities::TSharedPointer<Actor> AVela;
-//std::vector<Texture> gridTexs;
+//Grid Actor
+MeshComponent                          MC;
+EngineUtilities::TSharedPointer<Actor> AGrid;
+std::vector<Texture> gridTexs;
 
 //EngineUtilities
 //---------------
@@ -123,6 +124,57 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
     return ( int )msg.wParam;
 }
+void CreateGrid(int width, int depth, float spacing)
+{
+    MC.m_vertex.clear();
+    MC.m_index.clear();
+    float halfLineWidth = 0.8 * 0.5f;
+    for (int i = -width; i <= width; ++i)
+    {
+        //Create vertices for a vertical line as two triangules
+        MC.m_vertex.push_back({ XMFLOAT3(i * spacing - halfLineWidth, 0, -depth * spacing), 
+                                XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(i * spacing + halfLineWidth, 0, -depth * spacing),
+                                XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(i * spacing - halfLineWidth, 0, depth * spacing), 
+                                XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(i * spacing + halfLineWidth, 0, depth * spacing), 
+                                XMFLOAT2(0.0f, 0.0f) });
+
+        MC.m_index.push_back(MC.m_vertex.size() - 4);
+        MC.m_index.push_back(MC.m_vertex.size() - 3);
+        MC.m_index.push_back(MC.m_vertex.size() - 2);
+
+        MC.m_index.push_back(MC.m_vertex.size() - 3);
+        MC.m_index.push_back(MC.m_vertex.size() - 2);
+        MC.m_index.push_back(MC.m_vertex.size() - 1);
+    }
+
+    for (int i = -depth; i <= depth; ++i)
+    {
+        //Create vertices for a horizontal line as two triangules
+        MC.m_vertex.push_back({ XMFLOAT3(-width * spacing,0, i * spacing - halfLineWidth),
+                               XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(width * spacing,0, i * spacing - halfLineWidth),
+                              XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(-width * spacing,0, i * spacing + halfLineWidth),
+                              XMFLOAT2(0.0f, 0.0f) });
+        MC.m_vertex.push_back({ XMFLOAT3(width * spacing,0, i * spacing + halfLineWidth),
+                              XMFLOAT2(0.0f, 0.0f) });
+       
+
+        MC.m_index.push_back(MC.m_vertex.size() - 4);
+        MC.m_index.push_back(MC.m_vertex.size() - 3);
+        MC.m_index.push_back(MC.m_vertex.size() - 2);
+
+        MC.m_index.push_back(MC.m_vertex.size() - 3);
+        MC.m_index.push_back(MC.m_vertex.size() - 2);
+        MC.m_index.push_back(MC.m_vertex.size() - 1);
+    }
+
+    MC.m_numVertex = MC.m_vertex.size();
+    MC.m_numIndex = MC.m_index.size();
+}
 
 
 
@@ -173,35 +225,16 @@ HRESULT InitDevice()
 
     g_ShaderProgram.init(g_device, "EngineIAM.fx", Layout);
 
+    //Create Grid
+    CreateGrid(50, 50, 25.0f);
+
     g_model.LoadModel("Models/Vela2.fbx");
 
-
-    //// Create vertex buffer
-    //for (auto& mesh : g_model.meshes)
-    //{
-    //    Buffer vertexBuffer;
-    //    vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
-    //    g_vertexBuffers.push_back(vertexBuffer);
-    //   
-    //   // // Create index buffer
-    //    Buffer indexBuffer;
-    //    indexBuffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
-    //    g_indexBuffers.push_back(indexBuffer);
-    //}
   
-
     // Inicialización de Constant Buffers
     g_CBBufferNeverChanges.init(g_device, sizeof(CBNeverChanges));
 
     g_CBBufferChangeOnResize.init(g_device, sizeof(CBChangeOnResize));
-
-    /*g_CBBufferChangesEveryFrame.init(g_device, sizeof(CBChangesEveryFrame));*/
-
-    ////Create SamplerState
-    //g_sampler.init(g_device);
-
-    //// Initialize the world matrices
-    //g_World = XMMatrixIdentity();
 
     Texture Vela_Char_BaseColor;
     Vela_Char_BaseColor.init(g_device, "Textures/Vela/Vela_Char_BaseColor.png", ExtensionType::PNG);
@@ -264,20 +297,25 @@ HRESULT InitDevice()
         MESSAGE("Actor", "Actor", "Actor resource not found.")
     }
 
-   /* grid = EngineUtilities::MakeShared<Actor>(g_device);
-    if (!grid.isNull()) {
-        MESSAGE("Actor", "Actor", "Actor accessed successfully.")
-            std::vector<MeshComponent> gridMesh;
+    AGrid = EngineUtilities::MakeShared<Actor>(g_device);
+    if (!AGrid.isNull()) {
+        std::vector<MeshComponent> gridMesh;
         gridMesh.push_back(MC);
-        grid->setMesh(g_device, gridMesh);
+        AGrid->setMesh(g_device, gridMesh);
         gridTexs.push_back(g_default);
-        grid->setTextures(gridTexs);
-        grid->getComponent<Transform>()->setPosition(EngineUtilities::Vector3(0.0f, -2.0f, 0.0f));
-        grid->getComponent<Transform>()->setScale(EngineUtilities::Vector3(.03f, .03f, .03f));
+        AGrid->setTextures(gridTexs);
+        AGrid->getComponent<Transform>()->setPosition(EngineUtilities::Vector3(0.0f, 
+                                                                              -2.0f, 
+                                                                               0.0f));
+        AGrid->getComponent<Transform>()->setScale(EngineUtilities::Vector3(.03f,
+                                                                            .03f, 
+                                                                            .03f));
+        MESSAGE("Actor", "Actor", "Actor accessed successfully.")
     }
     else {
         MESSAGE("Actor", "Actor", "Actor resource not found.")
-    }*/
+    }
+
     g_UserInterface.init(g_window.m_hWnd, g_device.m_device, g_deviceContext.m_deviceContext);
     return S_OK;
 }
@@ -291,7 +329,7 @@ void CleanupDevice()
     if (g_deviceContext.m_deviceContext) g_deviceContext.m_deviceContext->ClearState();
 
     AVela->destroy();
-    //grid->destroy();
+    AGrid->destroy();
 
     //g_default.destroy();
     g_CBBufferNeverChanges.destroy();
@@ -356,7 +394,7 @@ void Update(double DeltaTime)
    // Actualizar info logica del mesh
    AVela->getComponent<Transform>()->ui_noWindow("Transform");
    AVela->update(0, g_deviceContext);
-   //grid->update(0, g_deviceContext);
+   AGrid->update(0, g_deviceContext);
    //EngineUtilities::Vector3 translation(0.0f, 0.0f, DeltaTime);
    //AVela->getComponent<Transform>()->translate(translation);
    //AVela->getComponent<Transform>()->setRotation(Vector3f(XM_PI / -2.0f, DeltaTime, XM_PI / 2.0f));
@@ -380,25 +418,8 @@ void Render()
 
     // Render the models
     AVela->render(g_deviceContext);
-    //grid->render(g_deviceContext);
+    AGrid->render(g_deviceContext);
 
-    //for (size_t i = 0; i < 7; i++) {
-    //	//g_vertexBuffers[i].render(g_deviceContext, 0, 1);
-        //g_indexBuffers[i].render(g_deviceContext, DXGI_FORMAT_R32_UINT);
-        //if (i <= modelTextures.size() - 1)
-        //{
-        //	modelTextures[i].render(g_deviceContext, 0, 1);
-        //}
-        //else {
-        //	g_default.render(g_deviceContext, 0, 1);
-        //}
-        //g_default.render(g_deviceContext, 0, 1);
-        //g_sampler.render(g_deviceContext, 0, 1);
-    //
-    //
-    //	//g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    //	//g_deviceContext.m_deviceContext->DrawIndexed(g_model.meshes[i].m_numIndex, 0, 0);
-    //}
 
     // Actualizar constant buffers
     g_CBBufferNeverChanges.render(g_deviceContext, 0, 1);
