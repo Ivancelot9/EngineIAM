@@ -15,23 +15,30 @@
 #include "UserInterface.h" //Archivo de cabeza
 #include "Actor.h"
 
-class BaseApp
-{
+class BaseApp{
+
 public:
 	BaseApp() = default;
 	~BaseApp() = default;
 
-	HRESULT init();
+	HRESULT 
+	init();
 
-	void update();
+	void 
+	update();
 
-	void render();
+	void 
+	render();
 
-	void destroy();
+	void 
+	destroy();
 
-	int run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow, WNDPROC wndproc);
+	int 
+	run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow,
+		WNDPROC wndproc);
 
-	void CreateGrid(int width, int depth, float spacing);
+	void 
+	CreateGrid(int width, int depth, float spacing);
 private:
 
 	Window                              m_window;                    // Ventana
@@ -70,6 +77,6 @@ private:
 	//Grid Actor
 	MeshComponent                          MC;
 	EngineUtilities::TSharedPointer<Actor> AGrid;
-	std::vector<Texture> gridTexs;
+	std::vector<Texture>                   gridTexs;
 
 };

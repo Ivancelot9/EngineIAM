@@ -7,7 +7,8 @@
 
 
 
-void UserInterface::init(void* window, ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+void
+UserInterface::init(void* window, ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -84,7 +85,9 @@ UserInterface::destroy() {
     ImGui::DestroyContext();
 }
 
-void UserInterface::vec3Control(const std::string& label, float* values, float resetValue, float columnWidth) {
+void 
+UserInterface::vec3Control(const std::string& label, float* values, float resetValue, 
+                           float columnWidth) {
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
 

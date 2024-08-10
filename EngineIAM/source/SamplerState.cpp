@@ -3,7 +3,8 @@
 #include "DeviceContext.h"
 
 // Método para inicializar el SamplerState
-void SamplerState::init(Device device) {
+void 
+SamplerState::init(Device device) {
     // Verifica que el dispositivo no sea nulo
     if (device.m_device == nullptr) {
         ERROR("SamplerState", "init", "CHECK FOR Unsupported BindFlag");
@@ -40,16 +41,20 @@ void SamplerState::init(Device device) {
 }
 
 // Método para actualizar el SamplerState (actualmente vacío, placeholder para futuras actualizaciones)
-void SamplerState::update() {
+void 
+SamplerState::update() {
 }
 
 // Método para aplicar el SamplerState al pipeline gráfico
-void SamplerState::render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumSamplers) {
+void
+SamplerState::render(DeviceContext& deviceContext, unsigned int StartSlot, 
+                     unsigned int NumSamplers) {
     // Establece el sampler state en el pixel shader
     deviceContext.PSSetSamplers(StartSlot, NumSamplers, &m_sampler);
 }
 
 // Método para liberar los recursos del SamplerState
-void SamplerState::destroy() {
+void 
+SamplerState::destroy() {
     SAFE_RELEASE(m_sampler);
 }

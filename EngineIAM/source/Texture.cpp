@@ -4,7 +4,8 @@
 #include "DeviceContext.h"
 #include "stb_image.h"
 
-HRESULT Texture::init(Device device, std::string textureName, ExtensionType extensionType)
+HRESULT 
+Texture::init(Device device, std::string textureName, ExtensionType extensionType)
 {
 	if (device.m_device == nullptr)
 	{
@@ -69,7 +70,8 @@ HRESULT Texture::init(Device device, std::string textureName, ExtensionType exte
 	
 }
 
-void Texture::init(Device device,
+void 
+Texture::init(Device device,
 	               unsigned int width, 
 	               unsigned int height, 
 	               DXGI_FORMAT Format, 
@@ -116,11 +118,13 @@ void Texture::init(Device device,
 	}
 }
 
-void Texture::update()
+void 
+Texture::update()
 {
 }
 
-void Texture::render(DeviceContext& deviceContext, 
+void 
+Texture::render(DeviceContext& deviceContext, 
 	unsigned int StartSlot,
 	unsigned int NumViews)
 {
@@ -132,7 +136,8 @@ void Texture::render(DeviceContext& deviceContext,
 	}
 }
 
-void Texture::destroy()
+void 
+Texture::destroy()
 {
 	if (m_texture != nullptr)
 	{

@@ -6,29 +6,49 @@
 class ModelLoader
 {
 public:
-	ModelLoader();
-	~ModelLoader();
+    // Constructor y destructor: manejan la inicialización y limpieza de recursos del SDK de FBX.
+    ModelLoader();
+    ~ModelLoader();
 
-	bool LoadModel(const std::string& filePath);
-	const std::vector<SimpleVertex>& GetVertices() const { return vertices; }
-	const std::vector<uint32_t>& GetIndices() const { return indices; }
+    // Carga un modelo desde un archivo FBX dado el path.
+    // Devuelve true si la carga fue exitosa, false si hubo algún error.
+    bool LoadModel(const std::string& filePath);
 
-	std::vector<std::string>
-		GetTextureFileNames()const { return textureFileNames; }
+    // Obtiene los vértices procesados del modelo cargado.
+    const std::vector<SimpleVertex>& GetVertices() const { return vertices; }
 
-	void ProcessNode(FbxNode* node);
-	void ProcessMesh(FbxNode* node);
+    // Obtiene los índices de los vértices procesados del modelo cargado.
+    const std::vector<uint32_t>& GetIndices() const { return indices; }
 
-	void ProcessMaterials(FbxSurfaceMaterial* material);
+    // Obtiene los nombres de archivos de texturas asociados con el modelo.
+    std::vector<std::string> GetTextureFileNames() const { return textureFileNames; }
+
+    // Procesa un nodo en la escena FBX, generalmente llamado recursivamente para procesar todos los subnodos.
+    void ProcessNode(FbxNode* node);
+
+    // Procesa un mesh dentro de un nodo FBX. Extrae vértices, índices y otros datos relevantes.
+    void ProcessMesh(FbxNode* node);
+
+    // Procesa los materiales asociados con el mesh y extrae la información necesaria (texturas, propiedades, etc.).
+    void ProcessMaterials(FbxSurfaceMaterial* material);
 
 private:
-	FbxManager* lSdkManager;
-	FbxScene* lScene;
-	std::vector<SimpleVertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<std::string>textureFileNames;
+    // Puntero al manager del SDK de FBX, necesario para manejar la memoria y otros recursos de FBX.
+    FbxManager* lSdkManager;
+
+    // Puntero a la escena FBX que contiene todos los datos del modelo cargado.
+    FbxScene* lScene;
+
+    // Vértices del modelo después de haber sido procesados desde el archivo FBX.
+    std::vector<SimpleVertex> vertices;
+
+    // Índices para los vértices, usados para definir las caras del mesh.
+    std::vector<unsigned int> indices;
+
+    // Nombres de los archivos de texturas asociados con el modelo.
+    std::vector<std::string> textureFileNames;
+
 public:
-	std::vector<MeshComponent> meshes;
-
+    // Almacena los diferentes componentes de mesh procesados del modelo cargado.
+    std::vector<MeshComponent> meshes;
 };
-

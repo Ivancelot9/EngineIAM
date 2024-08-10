@@ -12,15 +12,17 @@ public:
 	DepthStencilView()= default;
 	~DepthStencilView() = default;
 
-	void init(Device& device,
-		Texture& depthStencil,
-		DXGI_FORMAT format);
+	void 
+	init(Device& device, Texture& depthStencil, DXGI_FORMAT format);
 
-	void update();
+	void
+	update();
 
-	void render(DeviceContext& deviceContext);
+	void 
+	render(DeviceContext& deviceContext);
 
-	void destroy();
+	void 
+	destroy();
 
 
 public:

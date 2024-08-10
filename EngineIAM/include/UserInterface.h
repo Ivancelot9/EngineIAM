@@ -9,78 +9,107 @@ class Window;
 class SwapChain;
 class Texture;
 
-class UserInterface
-{
+class UserInterface{
 public:
+    // Constructor por defecto
     UserInterface() = default;
+
+    // Destructor por defecto
     ~UserInterface() = default;
 
-    void init(void* window, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
-
-    void update();
-
-    void render();
-
-    void destroy();
-
+    // Inicializa la interfaz de usuario con una ventana, un dispositivo Direct3D y un contexto de dispositivo
     void
-        vec3Control(const std::string& label,
-            float* values,
-            float resetValues = 0.0f,
-            float columnWidth = 100.0f);
+    init(void* window, ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
-    void
-        menuBar(Window window, SwapChain swapChain, Texture& backBuffer);
+    // Actualiza el estado de la interfaz de usuario
+    void 
+    update();
 
-    void
-        Renderer(Window window, ID3D11ShaderResourceView* renderTexture);
+    // Renderiza la interfaz de usuario
+    void 
+    render();
 
-    //void
-    //Inspector(std::vector<Model> & models, int index);
+    // Libera los recursos utilizados por la interfaz de usuario
+    void 
+    destroy();
 
-    void
-        inspectorContainer();
+    // Control deslizante para valores en un rango de tres dimensiones
+    void 
+    vec3Control(const std::string& label,
+                float* values,
+                float resetValues = 0.0f,
+                float columnWidth = 100.0f);
 
-    void
-        output();
+    // Crea una barra de menú en la interfaz de usuario
+    void 
+    menuBar(Window window, SwapChain swapChain, Texture& backBuffer);
 
-    void
-        darkStyle();
+    // Renderiza una textura en la interfaz de usuario
+    void 
+    Renderer(Window window, ID3D11ShaderResourceView* renderTexture);
 
-    void
-        greyStyle();
+    // Crea un contenedor para el inspector en la interfaz de usuario (comentado)
+    // void Inspector(std::vector<Model> & models, int index);
 
-    void
-        GameMakerStyle();
+    // Crea un contenedor para el inspector en la interfaz de usuario
+    void 
+    inspectorContainer();
 
-    void
-        visualStudioStyle();
+    // Crea un área de salida para mensajes o información en la interfaz de usuario
+    void 
+    output();
 
-    void
-        ToolTip(std::string icon, std::string tip);
-    void
-        ToolTip(std::string tip);
+    // Aplica un estilo oscuro a la interfaz de usuario
+    void     
+    darkStyle();
 
-    void
-        toolTipData();
+    // Aplica un estilo gris a la interfaz de usuario
+    void 
+    greyStyle();
 
-    void
-        ToolBar();
+    // Aplica un estilo de creador de juegos a la interfaz de usuario
+    void 
+    GameMakerStyle();
 
-    void
-        closeApp();
+    // Aplica un estilo de Visual Studio a la interfaz de usuario
+    void 
+    visualStudioStyle();
 
-    void
-        RenderFullScreenTransparentWindow();
+    // Crea una herramienta de información emergente (tooltip) con un icono y un texto
+    void 
+    ToolTip(std::string icon, std::string tip);
+
+    // Crea una herramienta de información emergente (tooltip) con solo texto
+    void 
+    ToolTip(std::string tip);
+
+    // Crea y gestiona datos para las herramientas de información emergente
+    void 
+    toolTipData();
+
+    // Crea una barra de herramientas en la interfaz de usuario
+    void 
+    ToolBar();
+
+    // Cierra la aplicación desde la interfaz de usuario
+    void 
+    closeApp();
+
+    // Renderiza una ventana transparente a pantalla completa
+    void 
+    RenderFullScreenTransparentWindow();
+
 private:
+    // Variables de estado para los valores de los checkboxes
     bool checkboxValue = true;
     bool checkboxValue2 = false;
+
+    // Nombres de objetos en la interfaz de usuario
     std::vector<const char*> m_objectsNames;
+
+    // Datos de las herramientas de información emergente
     std::vector<const char*> m_tooltips;
 
-    bool show_exit_popup = false; // Variable de estado para el popup
-
-
-private:
-
+    // Variable de estado para mostrar un popup de salida
+    bool show_exit_popup = false;
 };

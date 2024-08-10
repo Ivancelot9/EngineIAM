@@ -2,8 +2,9 @@
 #include "Device.h"
 #include "DeviceContext.h"
 
-void ShaderProgram::init(Device device, std::string fileName, std::vector<D3D11_INPUT_ELEMENT_DESC> Layout)
-{
+void 
+ShaderProgram::init(Device device, std::string fileName, 
+                    std::vector<D3D11_INPUT_ELEMENT_DESC> Layout){
     // Verificar si el dispositivo Direct3D es válido
     if (device.m_device == nullptr)
     {
@@ -32,8 +33,8 @@ void ShaderProgram::init(Device device, std::string fileName, std::vector<D3D11_
     CreateShader(device, ShaderType::PIXEL_SHADER);
 }
 
-void ShaderProgram::render(DeviceContext& deviceContext)
-{
+void 
+ShaderProgram::render(DeviceContext& deviceContext){
     // Establecer el Input Layout en el contexto del dispositivo
     m_inputLayout.render(deviceContext);
 
@@ -44,8 +45,8 @@ void ShaderProgram::render(DeviceContext& deviceContext)
     deviceContext.PSSetShader(m_PixelShader, nullptr, 0);
 }
 
-void ShaderProgram::destroy()
-{
+void 
+ShaderProgram::destroy(){
     // Liberar el recurso del shader de vértices
     SAFE_RELEASE(m_VertexShader);
 
@@ -56,8 +57,9 @@ void ShaderProgram::destroy()
     SAFE_RELEASE(m_PixelShader);
 }
 
-HRESULT ShaderProgram::CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
-{
+HRESULT 
+ShaderProgram::CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, 
+                                     LPCSTR szShaderModel, ID3DBlob** ppBlobOut){
     HRESULT hr = S_OK;
 
     // Configurar las banderas de compilación del shader
@@ -86,8 +88,9 @@ HRESULT ShaderProgram::CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoi
     return S_OK;
 }
 
-void ShaderProgram::CreateInputLayout(Device device, std::vector<D3D11_INPUT_ELEMENT_DESC> Layout)
-{
+void 
+ShaderProgram::CreateInputLayout(Device device, 
+                                 std::vector<D3D11_INPUT_ELEMENT_DESC> Layout){
     // Inicializar el Input Layout con los datos del shader de vértices compilado
     m_inputLayout.init(device, Layout, m_vertexShaderData);
 
@@ -95,8 +98,8 @@ void ShaderProgram::CreateInputLayout(Device device, std::vector<D3D11_INPUT_ELE
     m_vertexShaderData->Release();
 }
 
-void ShaderProgram::CreateShader(Device device, ShaderType type)
-{
+void 
+ShaderProgram::CreateShader(Device device, ShaderType type){
     HRESULT hr = S_OK;
     ID3DBlob* shaderData = nullptr;
 

@@ -1,7 +1,7 @@
 #include "BaseApp.h"
 
-HRESULT BaseApp::init()
-{
+HRESULT 
+BaseApp::init(){
     HRESULT hr = S_OK;
 
     //Create SwapChain
@@ -139,8 +139,8 @@ HRESULT BaseApp::init()
     return S_OK;
 }
 
-void BaseApp::update()
-{
+void 
+BaseApp::update(){
 
     m_UserInterface.update();
     bool show_demo_window = true;
@@ -157,8 +157,8 @@ void BaseApp::update()
     
 }
 
-void BaseApp::render()
-{
+void
+BaseApp::render(){
     // Clear the back buffer
     float ClearColor[4] = { 0.85f, 0.85f, 0.85f, 1.0f }; // red, green, blue, alpha
     m_renderTargetView.render(m_deviceContext, m_depthStencilView, 1, ClearColor);
@@ -185,8 +185,8 @@ void BaseApp::render()
     m_swapchain.present();
 }
 
-void BaseApp::destroy()
-{
+void 
+BaseApp::destroy(){
     if (m_deviceContext.m_deviceContext) m_deviceContext.m_deviceContext->ClearState();
 
     AVela->destroy();
@@ -209,8 +209,11 @@ void BaseApp::destroy()
 
 }
 
-int BaseApp::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow, WNDPROC wndproc)
-{
+int
+BaseApp::run(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+             LPWSTR lpCmdLine, int nCmdShow,
+             WNDPROC wndproc){
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -244,8 +247,9 @@ int BaseApp::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine,
     return (int)msg.wParam;
 }
 
-void BaseApp::CreateGrid(int width, int depth, float spacing)
-{
+void 
+BaseApp::CreateGrid(int width, int depth, float spacing){
+
     MC.m_vertex.clear();
     MC.m_index.clear();
     float halfLineWidth = 0.8 * 0.5f;

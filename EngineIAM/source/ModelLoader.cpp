@@ -28,8 +28,8 @@ ModelLoader::~ModelLoader()
         lSdkManager->Destroy();
 }
 
-bool ModelLoader::LoadModel(const std::string& filePath)
-{
+bool 
+ModelLoader::LoadModel(const std::string& filePath){
     // Crear un importador para cargar el archivo FBX
     FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
 
@@ -76,8 +76,8 @@ bool ModelLoader::LoadModel(const std::string& filePath)
     return true;
 }
 
-void ModelLoader::ProcessNode(FbxNode* node)
-{
+void 
+ModelLoader::ProcessNode(FbxNode* node){
     // Verificar si el nodo tiene un atributo asociado
     if (node->GetNodeAttribute())
     {
@@ -96,8 +96,8 @@ void ModelLoader::ProcessNode(FbxNode* node)
     }
 }
 
-void ModelLoader::ProcessMesh(FbxNode* node)
-{
+void 
+ModelLoader::ProcessMesh(FbxNode* node){
     // Obtener la malla del nodo
     FbxMesh* mesh = node->GetMesh();
     if (!mesh) return; // Salir si el nodo no contiene una malla
@@ -169,8 +169,8 @@ void ModelLoader::ProcessMesh(FbxNode* node)
     meshes.push_back(meshData);
 }
 
-void ModelLoader::ProcessMaterials(FbxSurfaceMaterial* material)
-{
+void 
+ModelLoader::ProcessMaterials(FbxSurfaceMaterial* material) {
     // Procesar el material para obtener las texturas asociadas
     if (material)
     {

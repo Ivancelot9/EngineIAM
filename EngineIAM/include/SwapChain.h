@@ -10,28 +10,44 @@ class Texture;
 class SwapChain
 {
 public:
-	SwapChain()= default;
-	~SwapChain() = default;
+    // Constructor por defecto
+    SwapChain() = default;
 
-	void init(Device & device, 
-		      DeviceContext & deviceContext,
-		       Texture & backBuffer,
-		       Window  window);
+    // Destructor por defecto
+    ~SwapChain() = default;
 
-	void update();
+    // Método para inicializar el SwapChain
+    // Inicializa el SwapChain utilizando el dispositivo, el contexto del dispositivo, el back buffer y la ventana
+    void 
+    init(Device& device, DeviceContext& deviceContext, Texture& backBuffer,
+         Window  window);
 
-	void render();
+    // Método para actualizar el estado del SwapChain (actualmente no implementado)
+    void 
+    update();
 
-	void destroy();
+    // Método para realizar el renderizado (actualmente no implementado)
+    void 
+    render();
 
-	void present();
+    // Método para destruir el SwapChain y liberar los recursos asociados
+    void 
+    destroy();
+
+    // Método para presentar el SwapChain en la pantalla
+    void 
+    present();
 
 public:
+    // Puntero al SwapChain de Direct3D
+    IDXGISwapChain* m_SwapChain = nullptr;
 
-	IDXGISwapChain* m_SwapChain = nullptr;
-	D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL;
+    // Tipo de driver de Direct3D
+    D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL;
+
 private:
-	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0;
+    // Nivel de características de Direct3D (por defecto es 11.0)
+    D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 };
 

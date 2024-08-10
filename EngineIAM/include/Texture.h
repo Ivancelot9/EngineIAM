@@ -4,8 +4,7 @@
 class Device;
 class DeviceContext;
 
-class Texture
-{
+class Texture{
 public:
 	Texture() = default;
 	~Texture() = default;
@@ -15,22 +14,25 @@ public:
 	/// Brief: Crea una textura a partir de una imagen (.dds) desde nuestro ordenador
 	/// <param name="device"></param> Lllamamos al DEvice paea poder generar recuersos en la memoria
 	/// <param name="textureName"></param>Almacenar el nombre de la textura
-	HRESULT init(Device device, std::string textureName, ExtensionType extensionType);
+	HRESULT 
+    init(Device device, std::string textureName, ExtensionType extensionType);
 	/// <summary>
 /// Brief: Este metodo es el reposable de crear Textura en 2D 
 /// </summary>
-	void init(Device device, unsigned int width, unsigned int height, 
-		      DXGI_FORMAT Format,
-		      unsigned int BindFlags);
+	void 
+	init(Device device, unsigned int width, unsigned int height, 
+		 DXGI_FORMAT Format, unsigned int BindFlags);
 
 
-	void update();
+	void 
+    update();
 /// <summary>
 /// Brief: Este metodoco carga la actualizacion de la logica de la textura
 /// </summary>
 
-	void render(DeviceContext & deviceContext,
-		        unsigned int StartSlot, unsigned int NumViews);
+	void 
+	render(DeviceContext & deviceContext,
+		   unsigned int StartSlot, unsigned int NumViews);
 /// <summary>
 /// Brief: Este metodo se encarga de dibujar los recursos en la pantalla
 /// </summary>
@@ -38,7 +40,8 @@ public:
 	/// <summary>
 	/// Este metodo se encarga de realizar los recursos almacenados en la memoria de la clase
 	/// </summary>
-	void destroy();
+	void 
+	destroy();
 
 
 public:

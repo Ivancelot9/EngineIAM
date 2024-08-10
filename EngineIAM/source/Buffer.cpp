@@ -4,7 +4,9 @@
 #include "MeshComponent.h"
 
 // Método privado para crear un buffer
-void Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, D3D11_SUBRESOURCE_DATA* initData) {
+void 
+Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, 
+                     D3D11_SUBRESOURCE_DATA* initData) {
     HRESULT hr = device.CreateBuffer(&desc, initData, &m_buffer);
     if (FAILED(hr)) {
         ERROR("Buffer", "createBuffer", "CHECK FOR method createBuffer()");
@@ -12,7 +14,8 @@ void Buffer::createBuffer(Device& device, D3D11_BUFFER_DESC& desc, D3D11_SUBRESO
 }
 
 // Inicializa el buffer con un mesh y un bindFlag específico
-void Buffer::init(Device device, MeshComponent mesh, unsigned int bindFlag) {
+void
+Buffer::init(Device device, MeshComponent mesh, unsigned int bindFlag) {
     if (device.m_device == nullptr) {
         ERROR("Buffer", "init", "CHECK FOR Device device");
     }
@@ -48,7 +51,8 @@ void Buffer::init(Device device, MeshComponent mesh, unsigned int bindFlag) {
 }
 
 // Inicializa un buffer con un tamaño específico en bytes
-void Buffer::init(Device device, unsigned int ByteWidth) {
+void 
+Buffer::init(Device device, unsigned int ByteWidth) {
     if (device.m_device == nullptr || ByteWidth == 0) {
         ERROR("Buffer", "init", "CHECK FOR parameters");
     }
@@ -65,12 +69,16 @@ void Buffer::init(Device device, unsigned int ByteWidth) {
 }
 
 // Actualiza el buffer con nuevos datos
-void Buffer::update(DeviceContext& deviceContext, unsigned int DstSubresource, const D3D11_BOX* pDstBox, const void* pSrcData, unsigned int SrcRowPitch, unsigned int SrcDepthPitch) {
+void
+Buffer::update(DeviceContext& deviceContext, unsigned int DstSubresource, const D3D11_BOX* pDstBox,
+               const void* pSrcData, unsigned int SrcRowPitch, unsigned int SrcDepthPitch) {
+
     deviceContext.UpdateSubresource(m_buffer, DstSubresource, pDstBox, pSrcData, SrcRowPitch, SrcDepthPitch);
 }
 
 // Renderiza el buffer en el contexto del dispositivo
-void Buffer::render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumBuffers) {
+void 
+Buffer::render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumBuffers) {
     switch (m_bindFlag) {
     case D3D11_BIND_VERTEX_BUFFER:
         deviceContext.IASetVertexBuffers(StartSlot, NumBuffers, &m_buffer, &m_stride, &m_offset);
@@ -85,7 +93,8 @@ void Buffer::render(DeviceContext& deviceContext, unsigned int StartSlot, unsign
 }
 
 // Renderiza un index buffer con un formato específico
-void Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
+void
+Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
     if (m_bindFlag == D3D11_BIND_INDEX_BUFFER) {
         deviceContext.IASetIndexBuffer(m_buffer, format, m_offset);
     }
@@ -95,12 +104,15 @@ void Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format) {
 }
 
 // Renderiza el modelo utilizando constant buffers en los shaders de vértices y píxeles
-void Buffer::renderModel(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumBuffers) {
+void 
+Buffer::renderModel(DeviceContext& deviceContext, unsigned int StartSlot, 
+                    unsigned int NumBuffers) {
     deviceContext.m_deviceContext->VSSetConstantBuffers(StartSlot, NumBuffers, &m_buffer);
     deviceContext.m_deviceContext->PSSetConstantBuffers(StartSlot, NumBuffers, &m_buffer);
 }
 
 // Libera los recursos del buffer
-void Buffer::destroy() {
+void 
+Buffer::destroy() {
     SAFE_RELEASE(m_buffer);
 }

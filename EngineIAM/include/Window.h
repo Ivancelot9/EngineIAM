@@ -4,26 +4,45 @@
 class Window
 {
 public:
-	Window()=default;
-	~Window()=default;
+    // Constructor por defecto
+    Window() = default;
 
+    // Destructor por defecto
+    ~Window() = default;
 
-	HRESULT init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc);
+    // Inicializa la ventana con la instancia de la aplicación, parámetros de visualización y procedimiento de ventana
+    HRESULT 
+    init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc);
 
-	void update();
+    // Actualiza el estado de la ventana (actualmente vacío)
+    void 
+    update();
 
-	void render();
+    // Realiza operaciones de renderizado en la ventana (actualmente vacío)
+    void 
+    render();
 
-	void destroy();
+    // Destruye la ventana y libera los recursos asociados
+    void 
+    destroy();
 
 public:
-	HWND m_hWnd = nullptr;
-	unsigned int m_width;
-	unsigned int m_height;
+    // Manejador de la ventana, identifica la ventana en el sistema
+    HWND m_hWnd = nullptr;
+
+    // Ancho de la ventana
+    unsigned int m_width;
+
+    // Alto de la ventana
+    unsigned int m_height;
 
 private:
-	HINSTANCE m_hInst = nullptr;
-	RECT m_rect;
-	std::string m_windowName = "Engine IAM";
-};
+    // Instancia de la aplicación
+    HINSTANCE m_hInst = nullptr;
 
+    // Estructura que define el tamaño y posición de la ventana
+    RECT m_rect;
+
+    // Nombre de la ventana que aparece en la barra de título
+    std::string m_windowName = "Engine IAM";
+};
